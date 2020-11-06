@@ -9,9 +9,11 @@ const Statistics = ({
   averageFeedback,
   positiveFeedbackPercentage,
 }) => {
+  if (good === 0 && neutral === 0 && bad === 0) {
+    return <p>No feedback given</p>
+  }
   return (
     <div>
-      <h1>statistics</h1>
       <p>good {good}</p>
       <p>neutral {neutral}</p>
       <p>bad {bad}</p>
@@ -24,7 +26,7 @@ const Statistics = ({
 
 const App = () => {
   // save clicks of each button to its own state
-  const [good, setGood] = useState(1)
+  const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
 
@@ -43,6 +45,7 @@ const App = () => {
       <button onClick={incrementGoodFeedback}>good</button>
       <button onClick={incrementNeutralFeedback}>neutral</button>
       <button onClick={incrementBadFeedback}>bad</button>
+      <h1>statistics</h1>
       <Statistics
         good={good}
         neutral={neutral}
