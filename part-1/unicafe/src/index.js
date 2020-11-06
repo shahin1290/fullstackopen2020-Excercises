@@ -1,25 +1,32 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
-const Statistics = ({
-  good,
-  bad,
-  neutral,
-  totalFeedback,
-  averageFeedback,
-  positiveFeedbackPercentage,
-}) => {
+const Button = ({ handleClick, text }) => (
+  <button onClick={handleClick}>{text}</button>
+)
+
+const Statistic = ({ text, value }) => (
+  <p>
+    {text} {value}
+  </p>
+)
+
+const Statistics = ({ good, bad, neutral }) => {
   if (good === 0 && neutral === 0 && bad === 0) {
     return <p>No feedback given</p>
   }
+  const totalFeedback = () => good + neutral + bad
+  const averageFeedback = () =>
+    (good * 1 + neutral * 0 + bad * -1) / totalFeedback()
+  const positiveFeedbackPercentage = () => (good / totalFeedback()) * 100
   return (
     <div>
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
-      <p>all {totalFeedback()}</p>
-      <p>average {averageFeedback()}</p>
-      <p>positive {positiveFeedbackPercentage()} %</p>
+      <Statistic text='good' value={good} />
+      <Statistic text='neutral' value={neutral} />
+      <Statistic text='bad' value={bad} />
+      <Statistic text='all' value={totalFeedback()} />
+      <Statistic text='average' value={averageFeedback()} />
+      <Statistic text='positive' value={`${positiveFeedbackPercentage()} %`} />
     </div>
   )
 }
@@ -34,26 +41,14 @@ const App = () => {
   const incrementNeutralFeedback = () => setNeutral(neutral + 1)
   const incrementBadFeedback = () => setBad(bad + 1)
 
-  const totalFeedback = () => good + neutral + bad
-  const averageFeedback = () =>
-    (good * 1 + neutral * 0 + bad * -1) / totalFeedback()
-  const positiveFeedbackPercentage = () => (good / totalFeedback()) * 100
-
   return (
     <div>
       <h1>give feedback</h1>
-      <button onClick={incrementGoodFeedback}>good</button>
-      <button onClick={incrementNeutralFeedback}>neutral</button>
-      <button onClick={incrementBadFeedback}>bad</button>
+      <Button handleClick={incrementGoodFeedback} text='good' />
+      <Button handleClick={incrementNeutralFeedback} text='neutral' />
+      <Button handleClick={incrementBadFeedback} text='bad' />
       <h1>statistics</h1>
-      <Statistics
-        good={good}
-        neutral={neutral}
-        bad={bad}
-        totalFeedback={totalFeedback}
-        averageFeedback={averageFeedback}
-        positiveFeedbackPercentage={positiveFeedbackPercentage}
-      />
+      <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
   )
 }
