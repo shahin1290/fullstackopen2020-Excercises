@@ -7,15 +7,14 @@ const App = () => {
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
 
-  const incrementGoodFeedback = () => {
-    setGood(good + 1)
-  }
-  const incrementNeutralFeedback = () => {
-    setNeutral(neutral + 1)
-  }
-  const incrementBadFeedback = () => {
-    setBad(bad + 1)
-  }
+  const incrementGoodFeedback = () => setGood(good + 1)
+  const incrementNeutralFeedback = () => setNeutral(neutral + 1)
+  const incrementBadFeedback = () => setBad(bad + 1)
+
+  const totalFeedback = () => good + neutral + bad
+  const averageFeedback = () =>
+    (good * 1 + neutral * 0 + bad * -1) / totalFeedback()
+  const positiveFeedbackPercentage = () => (good / totalFeedback()) * 100
 
   return (
     <div>
@@ -27,6 +26,9 @@ const App = () => {
       <p>good {good}</p>
       <p>neutral {neutral}</p>
       <p>bad {bad}</p>
+      <p>all {totalFeedback()}</p>
+      <p>average {averageFeedback()}</p>
+      <p>positive {positiveFeedbackPercentage()} %</p>
     </div>
   )
 }
