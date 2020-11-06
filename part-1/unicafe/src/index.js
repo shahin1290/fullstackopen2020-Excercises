@@ -6,9 +6,10 @@ const Button = ({ handleClick, text }) => (
 )
 
 const Statistic = ({ text, value }) => (
-  <p>
-    {text} {value}
-  </p>
+  <tr>
+    <td>{text}</td>
+    <td>{value}</td>
+  </tr>
 )
 
 const Statistics = ({ good, bad, neutral }) => {
@@ -17,17 +18,22 @@ const Statistics = ({ good, bad, neutral }) => {
   }
   const totalFeedback = () => good + neutral + bad
   const averageFeedback = () =>
-    (good * 1 + neutral * 0 + bad * -1) / totalFeedback()
-  const positiveFeedbackPercentage = () => (good / totalFeedback()) * 100
+    ((good * 1 + neutral * 0 + bad * -1) / totalFeedback()).toFixed(1)
+  const positiveFeedbackPercentage = () => ((good / totalFeedback()) * 100).toFixed(1)
   return (
-    <div>
-      <Statistic text='good' value={good} />
-      <Statistic text='neutral' value={neutral} />
-      <Statistic text='bad' value={bad} />
-      <Statistic text='all' value={totalFeedback()} />
-      <Statistic text='average' value={averageFeedback()} />
-      <Statistic text='positive' value={`${positiveFeedbackPercentage()} %`} />
-    </div>
+    <table>
+      <tbody>
+        <Statistic text='good' value={good} />
+        <Statistic text='neutral' value={neutral} />
+        <Statistic text='bad' value={bad} />
+        <Statistic text='all' value={totalFeedback()} />
+        <Statistic text='average' value={averageFeedback()} />
+        <Statistic
+          text='positive'
+          value={`${positiveFeedbackPercentage()} %`}
+        />
+      </tbody>
+    </table>
   )
 }
 
