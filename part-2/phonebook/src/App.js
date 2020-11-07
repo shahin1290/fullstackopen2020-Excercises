@@ -6,12 +6,16 @@ const App = () => {
 
   const addName = (e) => {
     e.preventDefault()
-    setPersons(persons.concat({ name: newName }))
+    const isNameExists = persons.some((person) => person.name === newName.trim())
+    if (isNameExists) {
+      return alert(`${newName.trim()} is already added to phonebook`)
+    }
+    setPersons(persons.concat({ name: newName.trim() }))
     setNewName('')
   }
-  
+
   const handleNameChange = (e) => {
-    setNewName(e.target.value);
+    setNewName(e.target.value)
   }
 
   return (
@@ -19,7 +23,7 @@ const App = () => {
       <h2>Phonebook</h2>
       <form onSubmit={addName}>
         <div>
-          name: <input value={newName} onChange={handleNameChange}/>
+          name: <input value={newName} onChange={handleNameChange} />
         </div>
         <div>
           <button type='submit'>add</button>
@@ -27,7 +31,9 @@ const App = () => {
       </form>
       <div>debug: {newName}</div>
       <h2>Numbers</h2>
-      {persons.map(person => <div key={person.name}>{person.name}</div>)}
+      {persons.map((person) => (
+        <div key={person.name}>{person.name}</div>
+      ))}
     </div>
   )
 }
