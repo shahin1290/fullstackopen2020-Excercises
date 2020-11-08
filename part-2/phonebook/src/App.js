@@ -1,4 +1,7 @@
 import React, { useState } from 'react'
+import PersonForm from './components/PersonForm'
+import Filter from './components/Filter'
+import Persons from './components/Persons'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -11,63 +14,26 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [searchText, setSearchText] = useState('')
 
-  const addPerson = (e) => {
-    e.preventDefault()
-    const isNameExists = persons.some(
-      (person) => person.name === newName.trim()
-    )
-
-    if (isNameExists) {
-      return alert(`${newName.trim()} is already added to phonebook`)
-    }
-    setPersons(persons.concat({ name: newName.trim(), number: newNumber }))
-
-    setNewName('')
-    setNewNumber('')
-  }
-
-  const handleNameChange = (e) => {
-    setNewName(e.target.value)
-  }
-
-  const handleNumberChange = (e) => {
-    setNewNumber(e.target.value)
-  }
-
-  const Numbers = () => {
-    const filteredPersons = persons.filter((person) =>
-      person.name.toLowerCase().includes(searchText)
-    )
-    return filteredPersons.map((person) => (
-      <div key={person.name}>
-        {person.name} {person.number}
-      </div>
-    ))
-  }
-
-  const handleSearchChange = (e) => {
-    setSearchText(e.target.value)
-  }
-
   return (
     <div>
-      <h1>Phonebook</h1>
-      filter shown with:
-      <input value={searchText} onChange={handleSearchChange} />
-      <h2>add a New</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type='submit'>add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      <Numbers />
+      <h2>Phonebook</h2>
+
+      <Filter searchText={searchText} setSearchText={setSearchText} />
+
+      <h3>add a New</h3>
+
+      <PersonForm
+        persons={persons}
+        setPersons={setPersons}
+        newName={newName}
+        setNewName={setNewName}
+        newNumber={newNumber}
+        setNewNumber={setNewNumber}
+      />
+
+      <h3>Numbers</h3>
+
+      <Persons persons={persons} searchText={searchText} />
     </div>
   )
 }
