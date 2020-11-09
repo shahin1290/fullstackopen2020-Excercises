@@ -1,16 +1,16 @@
-import React from 'react';
+import React from 'react'
 
-const Filter = ({searchText, setSearchText}) => {
-  const handleSearchChange = (e) => {
-    setSearchText(e.target.value)
+const Filter = ({ filterText, setFilterText }) => {
+  const handleInputChange = (e) => {
+    setFilterText(e.target.value)
   }
 
   return (
     <div>
       find countries:
-      <input value={searchText} onChange={handleSearchChange} />
+      <input value={filterText} onChange={handleInputChange} />
     </div>
-  );
-};
+  )
+}
 
-export default Filter;
+export default Filter

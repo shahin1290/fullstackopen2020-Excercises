@@ -1,26 +1,27 @@
 import React from 'react'
-import CountryData from './CountryData'
+import DisplayCountryData from './DisplayCountryData'
+import DisplayCountryList from './DisplayCountryList'
 
-const Countries = ({ countries, searchText }) => {
-  if (searchText === '') return null
-
+const Countries = ({ countries, filterText, setFilterText }) => {
   const filteredCountries = countries.filter((country) =>
-    country.name.toLowerCase().includes(searchText)
+    country.name.toLowerCase().includes(filterText)
   )
+
+  if (filterText === '' || filteredCountries.length === 0) return null
 
   if (filteredCountries.length > 10) {
     return <div>Too many matches, specify another filter</div>
-  } else if (filteredCountries.length > 1 && filteredCountries.length <= 10) {
+  } else if (filteredCountries.length > 1) {
     return (
-      <div>
-        {filteredCountries.map((country) => (
-          <div key={country.name}>{country.name}</div>
-        ))}
-      </div>
+      <DisplayCountryList
+        countries={filteredCountries}
+        setFilterText={setFilterText}
+        filterText={filterText}
+      />
     )
-  } else if (filteredCountries.length === 1) {
-    return <CountryData country={filteredCountries[0]} />
-  } else return null
+  } else {
+    return <DisplayCountryData country={filteredCountries[0]} />
+  }
 }
 
 export default Countries

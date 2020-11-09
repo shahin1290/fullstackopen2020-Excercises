@@ -4,6 +4,8 @@ const CountryData = ({ country }) => {
   return (
     <div>
       <h1>{country.name}</h1>
+      <div>capital {country.capital}</div>
+      <div>population {country.population}</div>
       <h2>Languages</h2>
       <ul>
         {country.languages.map((language) => (
