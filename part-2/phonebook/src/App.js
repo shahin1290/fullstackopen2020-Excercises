@@ -11,10 +11,9 @@ const App = () => {
   const [searchText, setSearchText] = useState('')
 
   useEffect(() => {
-    personService.getAll()
-      .then(response => {
-        setPersons(response.data)
-      })
+    personService.getAll().then((response) => {
+      setPersons(response)
+    })
   }, [])
 
   return (
@@ -36,7 +35,11 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons persons={persons} searchText={searchText} />
+      <Persons
+        persons={persons}
+        searchText={searchText}
+        setPersons={setPersons}
+      />
     </div>
   )
 }

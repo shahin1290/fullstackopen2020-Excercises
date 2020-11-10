@@ -32,7 +32,7 @@ const PersonForm = ({
         number: newNumber,
       })
       .then((response) => {
-        setPersons(persons.concat(response.data))
+        setPersons(persons.concat(response))
         setNewName('')
         setNewNumber('')
       })
