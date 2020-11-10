@@ -1,3 +1,4 @@
+import axios from 'axios'
 const PersonForm = ({
   persons,
   setPersons,
@@ -23,10 +24,17 @@ const PersonForm = ({
     if (isNameExists) {
       return alert(`${newName.trim()} is already added to phonebook`)
     }
-    setPersons(persons.concat({ name: newName.trim(), number: newNumber }))
 
-    setNewName('')
-    setNewNumber('')
+    axios
+      .post('http://localhost:3001/persons', {
+        name: newName.trim(),
+        number: newNumber,
+      })
+      .then((response) => {
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewNumber('')
+      })
   }
 
   return (
