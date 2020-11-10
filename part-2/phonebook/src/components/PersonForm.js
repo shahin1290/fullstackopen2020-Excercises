@@ -1,4 +1,5 @@
-import axios from 'axios'
+import personService from '../services/persons'
+
 const PersonForm = ({
   persons,
   setPersons,
@@ -25,8 +26,8 @@ const PersonForm = ({
       return alert(`${newName.trim()} is already added to phonebook`)
     }
 
-    axios
-      .post('http://localhost:3001/persons', {
+    personService
+      .create({
         name: newName.trim(),
         number: newNumber,
       })
