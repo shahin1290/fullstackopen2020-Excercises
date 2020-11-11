@@ -3,12 +3,14 @@ import personService from './services/persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchText, setSearchText] = useState('')
+  const [notification, setNotification] = useState({ message: null, type: '' })
 
   useEffect(() => {
     personService.getAll().then((response) => {
@@ -19,6 +21,11 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Notification
+        notification={notification}
+        setNotification={setNotification}
+      />
 
       <Filter searchText={searchText} setSearchText={setSearchText} />
 
@@ -31,6 +38,8 @@ const App = () => {
         setNewName={setNewName}
         newNumber={newNumber}
         setNewNumber={setNewNumber}
+        notification={notification}
+        setNotification={setNotification}
       />
 
       <h3>Numbers</h3>

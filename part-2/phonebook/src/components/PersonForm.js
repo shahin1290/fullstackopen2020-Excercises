@@ -7,6 +7,8 @@ const PersonForm = ({
   setNewName,
   newNumber,
   setNewNumber,
+  notification,
+  setNotification 
 }) => {
   const handleNameChange = (e) => {
     setNewName(e.target.value)
@@ -53,6 +55,8 @@ const PersonForm = ({
           setPersons(persons.concat(response))
           setNewName('')
           setNewNumber('')
+          setNotification({...notification, message:`Added ${newName}`, type: 'success'})
+          
         })
     }
   }
