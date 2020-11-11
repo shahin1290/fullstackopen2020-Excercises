@@ -48,6 +48,8 @@ const App = () => {
         persons={persons}
         searchText={searchText}
         setPersons={setPersons}
+        notification={notification}
+        setNotification={setNotification}
       />
     </div>
   )

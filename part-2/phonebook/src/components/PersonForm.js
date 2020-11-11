@@ -43,6 +43,7 @@ const PersonForm = ({
             )
             setNewName('')
             setNewNumber('')
+            setNotification({...notification, message:`${newName} has been updated successfully`, type: 'success'})
           })
       }
     } else {

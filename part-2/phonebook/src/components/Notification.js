@@ -1,16 +1,20 @@
 import React from 'react'
 
 const Notification = ({ notification, setNotification }) => {
+  const removeNotification = () => {
+    setTimeout(() => {
+      setNotification({ ...notification, message: null, type: '' })
+    }, 3000)
+  }
+
   if (notification.message === null) {
     return null
   }
 
   return (
-    <div className='error'>
+    <div className={`notification ${notification.type}`}>
       {notification.message}
-      {setTimeout(() => {
-        setNotification({...notification, message: null})
-      }, 1000)}
+      {removeNotification()}
     </div>
   )
 }
