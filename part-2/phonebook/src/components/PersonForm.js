@@ -8,7 +8,7 @@ const PersonForm = ({
   newNumber,
   setNewNumber,
   notification,
-  setNotification 
+  setNotification,
 }) => {
   const handleNameChange = (e) => {
     setNewName(e.target.value)
@@ -43,7 +43,18 @@ const PersonForm = ({
             )
             setNewName('')
             setNewNumber('')
-            setNotification({...notification, message:`${newName} has been updated successfully`, type: 'success'})
+            setNotification({
+              ...notification,
+              message: `${newName} has been updated successfully`,
+              type: 'success',
+            })
+          })
+          .catch((error) => {
+            setNotification({
+              ...notification,
+              message: `${error.response.data.error}`,
+              type: 'danger',
+            })
           })
       }
     } else {
@@ -56,8 +67,18 @@ const PersonForm = ({
           setPersons(persons.concat(response))
           setNewName('')
           setNewNumber('')
-          setNotification({...notification, message:`Added ${newName}`, type: 'success'})
-          
+          setNotification({
+            ...notification,
+            message: `Added ${newName}`,
+            type: 'success',
+          })
+        })
+        .catch((error) => {
+          setNotification({
+            ...notification,
+            message: `${error.response.data.error}`,
+            type: 'danger',
+          })
         })
     }
   }
