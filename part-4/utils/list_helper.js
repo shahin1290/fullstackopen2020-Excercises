@@ -16,10 +16,22 @@ const mostBlogs = (blogs) => {
   const groupByAuthor = _(blogs)
     .groupBy('author')
     .map((items, author) => ({ author: author, blogs: items.length }))
-    .value()
 
   return groupByAuthor.reduce((prev, curr) =>
     prev.blogs > curr.blogs ? prev : curr
+  )
+}
+
+const mostLikes = (blogs) => {
+  const groupByAuthorAndLikes = _(blogs)
+    .groupBy('author')
+    .map((items, author) => ({
+      author: author,
+      likes: items.reduce((acu, curr) => acu + curr.likes, 0),
+    }))
+
+  return groupByAuthorAndLikes.reduce((prev, curr) =>
+    prev.likes > curr.likes ? prev : curr
   )
 }
 
@@ -28,4 +40,5 @@ module.exports = {
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 }
