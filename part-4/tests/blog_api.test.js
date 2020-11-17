@@ -68,11 +68,7 @@ describe('HTTP POST request responds as', () => {
       likes: 12,
     }
 
-    await api
-      .post('/api/blogs')
-      .send(newBlog)
-      .expect(201)
-      .expect('Content-Type', /application\/json/)
+    await api.post('/api/blogs').send(newBlog).expect(201)
 
     const response = await api.get('/api/blogs')
 
@@ -89,15 +85,20 @@ describe('HTTP POST request responds as', () => {
       url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
     }
 
-    const response = await api
-      .post('/api/blogs')
-      .send(newBlog)
-      .expect(201)
-      .expect('Content-Type', /application\/json/)
+    const response = await api.post('/api/blogs').send(newBlog).expect(201)
 
     const { likes } = response.body
 
     expect(likes).toBe(0)
+  })
+
+  test('bad request if the title or url property is missing,', async () => {
+    const newBlog = {
+      likes: 10,
+      author: 'Edsger W. Dijkstra',
+    }
+
+    await api.post('/api/blogs').send(newBlog).expect(400)
   })
 })
 
