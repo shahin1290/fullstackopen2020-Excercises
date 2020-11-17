@@ -50,6 +50,13 @@ test('the first blog is about HTTP methods', async () => {
   expect(titles).toContain('React patterns')
 })
 
+test('verifies that the unique identifier property of the blog posts is named id', async () => {
+  const response = await api.get('/api/blogs')
+
+  const ids = response.body.map((r) => r.id)
+  expect(ids[0]).toBeDefined()
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
