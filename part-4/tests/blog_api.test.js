@@ -30,31 +30,57 @@ beforeEach(async () => {
   await blogObject.save()
 })
 
-test('blogs are returned as json', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
+describe('HTTP GET request responds as', () => {
+  test('blogs are returned as json', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
+
+  test('there are two blogs', async () => {
+    const response = await api.get('/api/blogs')
+
+    expect(response.body).toHaveLength(initialBlogs.length)
+  })
+
+  test('the first blog is about React Patterns', async () => {
+    const response = await api.get('/api/blogs')
+
+    const titles = response.body.map((r) => r.title)
+    expect(titles).toContain('React patterns')
+  })
+
+  test('verifies that the unique identifier property of the blog posts is named id', async () => {
+    const response = await api.get('/api/blogs')
+
+    const ids = response.body.map((r) => r.id)
+    expect(ids[0]).toBeDefined()
+  })
 })
 
-test('there are two blogs', async () => {
-  const response = await api.get('/api/blogs')
+describe('HTTP POST request responds as', () => {
+  test('a valid blog can be added', async () => {
+    const newBlog = {
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+      likes: 12,
+    }
 
-  expect(response.body).toHaveLength(initialBlogs.length)
-})
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
 
-test('the first blog is about HTTP methods', async () => {
-  const response = await api.get('/api/blogs')
+    const response = await api.get('/api/blogs')
 
-  const titles = response.body.map((r) => r.title)
-  expect(titles).toContain('React patterns')
-})
+    const titles = response.body.map((r) => r.title)
 
-test('verifies that the unique identifier property of the blog posts is named id', async () => {
-  const response = await api.get('/api/blogs')
-
-  const ids = response.body.map((r) => r.id)
-  expect(ids[0]).toBeDefined()
+    expect(response.body).toHaveLength(initialBlogs.length + 1)
+    expect(titles).toContain('Canonical string reduction')
+  })
 })
 
 afterAll(() => {
