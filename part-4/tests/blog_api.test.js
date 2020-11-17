@@ -2,35 +2,18 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
+const testHelper = require('./test_helper')
 const Blog = require('../models/blog')
-const initialBlogs = [
-  {
-    _id: '5a422a851b54a676234d17f7',
-    title: 'React patterns',
-    author: 'Michael Chan',
-    url: 'https://reactpatterns.com/',
-    likes: 7,
-    __v: 0,
-  },
-  {
-    _id: '5a422aa71b54a676234d17f8',
-    title: 'Go To Statement Considered Harmful',
-    author: 'Edsger W. Dijkstra',
-    url:
-      'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
-    likes: 5,
-    __v: 0,
-  },
-]
+
 beforeEach(async () => {
   await Blog.deleteMany({})
-  let blogObject = new Blog(initialBlogs[0])
+  let blogObject = new Blog(testHelper.initialBlogs[0])
   await blogObject.save()
-  blogObject = new Blog(initialBlogs[1])
+  blogObject = new Blog(testHelper.initialBlogs[1])
   await blogObject.save()
 })
 
-describe('HTTP GET request responds as', () => {
+describe('viewing saved blogs', () => {
   test('blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
@@ -41,7 +24,7 @@ describe('HTTP GET request responds as', () => {
   test('there are two blogs', async () => {
     const response = await api.get('/api/blogs')
 
-    expect(response.body).toHaveLength(initialBlogs.length)
+    expect(response.body).toHaveLength(testHelper.initialBlogs.length)
   })
 
   test('the first blog is about React Patterns', async () => {
@@ -59,7 +42,7 @@ describe('HTTP GET request responds as', () => {
   })
 })
 
-describe('HTTP POST request responds as', () => {
+describe('creating new blog ', () => {
   test('a valid blog can be added', async () => {
     const newBlog = {
       title: 'Canonical string reduction',
@@ -70,15 +53,15 @@ describe('HTTP POST request responds as', () => {
 
     await api.post('/api/blogs').send(newBlog).expect(201)
 
-    const response = await api.get('/api/blogs')
+    const blogsAfterPost = await testHelper.blogsInDB()
 
-    const titles = response.body.map((r) => r.title)
+    const titles = blogsAfterPost.map((r) => r.title)
 
-    expect(response.body).toHaveLength(initialBlogs.length + 1)
+    expect(blogsAfterPost).toHaveLength(testHelper.initialBlogs.length + 1)
     expect(titles).toContain('Canonical string reduction')
   })
 
-  test('it verifies that if the likes property is missing, it will default to 0', async () => {
+  test('sets default value to 0 if the likes property is missing', async () => {
     const newBlog = {
       title: 'Canonical string reduction',
       author: 'Edsger W. Dijkstra',
@@ -92,13 +75,31 @@ describe('HTTP POST request responds as', () => {
     expect(likes).toBe(0)
   })
 
-  test('bad request if the title or url property is missing,', async () => {
+  test('responds bad request if the title or url property is missing,', async () => {
     const newBlog = {
       likes: 10,
       author: 'Edsger W. Dijkstra',
     }
 
     await api.post('/api/blogs').send(newBlog).expect(400)
+  })
+})
+
+describe('deletion of a blog', () => {
+  test('succeeds with status code 204 if id is valid', async () => {
+    const blogsBeforeDelete = await testHelper.blogsInDB()
+
+    const { id, title } = blogsBeforeDelete[0]
+
+    await api.delete(`/api/blogs/${id}`).expect(204)
+
+    const blogsAfterDelete = await testHelper.blogsInDB()
+
+    expect(blogsAfterDelete.length).toBe(testHelper.initialBlogs.length - 1)
+
+    const titles = blogsAfterDelete.map((r) => r.title)
+
+    expect(titles).not.toContain(title)
   })
 })
 
