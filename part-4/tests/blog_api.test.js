@@ -81,6 +81,24 @@ describe('HTTP POST request responds as', () => {
     expect(response.body).toHaveLength(initialBlogs.length + 1)
     expect(titles).toContain('Canonical string reduction')
   })
+
+  test('it verifies that if the likes property is missing, it will default to 0', async () => {
+    const newBlog = {
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+    }
+
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const { likes } = response.body
+
+    expect(likes).toBe(0)
+  })
 })
 
 afterAll(() => {
