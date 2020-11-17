@@ -88,18 +88,30 @@ describe('creating new blog ', () => {
 describe('deletion of a blog', () => {
   test('succeeds with status code 204 if id is valid', async () => {
     const blogsBeforeDelete = await testHelper.blogsInDB()
-
     const { id, title } = blogsBeforeDelete[0]
 
     await api.delete(`/api/blogs/${id}`).expect(204)
 
     const blogsAfterDelete = await testHelper.blogsInDB()
-
     expect(blogsAfterDelete.length).toBe(testHelper.initialBlogs.length - 1)
 
     const titles = blogsAfterDelete.map((r) => r.title)
-
     expect(titles).not.toContain(title)
+  })
+})
+
+describe('update a blog', () => {
+  test('successfully returns the blog with updated properties', async () => {
+    const blogsBeforeUpdate = await testHelper.blogsInDB()
+    const { id, likes } = blogsBeforeUpdate[0]
+
+    await api
+      .put(`/api/blogs/${id}`)
+      .send({ likes: likes + 5 })
+      .expect(200)
+
+    const blogsAfterUpdate = await testHelper.blogsInDB()
+    expect(blogsAfterUpdate[0].likes).toBe(likes + 5)
   })
 })
 
