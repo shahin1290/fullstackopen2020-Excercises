@@ -1,10 +1,9 @@
 POST  http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJpZCI6IjVmYjYzMzJmMjg2NDEyNDQyOWU3MTJkNyIsImlhdCI6MTYwNTc3NzMxOX0.jIl1EDLQMab_uloDVRGH59t0HCNEotzUvXrK8E9Q_lk
 
 {
-  "title": "This is kona blog",
-  "author": "kona",
-  "url": "test@test.com",
-  "likes": 20,
-  "userId": "5fb57727e42ccf6dfa155baa"
+  "title": "This is test blog",
+  "author": "test",
+  "url": "test@test.com"
 }
