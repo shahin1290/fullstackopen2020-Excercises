@@ -1,32 +1,24 @@
 import React from 'react'
 import loginService from '../services/login'
+import blogService from '../services/blogs'
 
 const Login = ({ setUsername, setPassword, username, password, setUser }) => {
-  const handleNameChange = (e) => {
-    setUsername(e.target.value)
-  }
-
-  const handleNumberChange = (e) => {
-    setPassword(e.target.value)
-  }
-
   const handleFormSubmit = async (e) => {
     e.preventDefault()
     const user = await loginService.login({ username, password })
 
-    window.localStorage.setItem(
-      'loggedBlogappUser', JSON.stringify(user)
-    ) 
+    window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
+    blogService.setToken(user.token)
     setUser(user)
   }
 
   return (
     <form onSubmit={handleFormSubmit}>
       <div>
-        username <input onChange={handleNameChange} />
+        username <input onChange={({ target }) => setUsername(target.value)} />
       </div>
       <div>
-        password <input onChange={handleNumberChange} />
+        password <input onChange={({ target }) => setPassword(target.value)} />
       </div>
       <div>
         <button type='submit'>login</button>
