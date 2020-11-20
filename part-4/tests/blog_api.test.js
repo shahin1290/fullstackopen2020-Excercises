@@ -73,6 +73,17 @@ describe('creating new blog ', () => {
     expect(titles).toContain('Canonical string reduction')
   })
 
+  test('fails with status code and message if token is not provided', async () => {
+    const newBlog = {
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+      likes: 12,
+    }
+
+    await api.post('/api/blogs').send(newBlog).expect(401)
+  })
+
   test('sets default value to 0 if the likes property is missing', async () => {
     const newBlog = {
       title: 'Canonical string reduction',
@@ -128,7 +139,6 @@ describe('deletion of a blog', () => {
     id = response.body.id
     title = response.body.title
     await testHelper.initialBlogs.push(response.body)
-
   })
 
   test('succeeds with status code 204 if id is valid', async () => {
