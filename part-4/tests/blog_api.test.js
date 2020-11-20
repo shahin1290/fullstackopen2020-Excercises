@@ -43,6 +43,14 @@ describe('viewing saved blogs', () => {
 })
 
 describe('creating new blog ', () => {
+  let token = null
+  beforeEach(async () => {
+    const newUser = { username: 'shahin', password: 'shahin' }
+    await api.post('/api/users').send(newUser)
+    const loginResponse = await api.post('/api/login').send(newUser)
+    token = loginResponse.body.token
+  })
+
   test('a valid blog can be added', async () => {
     const newBlog = {
       title: 'Canonical string reduction',
@@ -51,7 +59,11 @@ describe('creating new blog ', () => {
       likes: 12,
     }
 
-    await api.post('/api/blogs').send(newBlog).expect(201)
+    await api
+      .post('/api/blogs')
+      .set('Authorization', `bearer ${token}`)
+      .send(newBlog)
+      .expect(201)
 
     const blogsAfterPost = await testHelper.blogsInDB()
 
@@ -68,7 +80,11 @@ describe('creating new blog ', () => {
       url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
     }
 
-    const response = await api.post('/api/blogs').send(newBlog).expect(201)
+    const response = await api
+      .post('/api/blogs')
+      .set('Authorization', `bearer ${token}`)
+      .send(newBlog)
+      .expect(201)
 
     const { likes } = response.body
 
@@ -81,16 +97,45 @@ describe('creating new blog ', () => {
       author: 'Edsger W. Dijkstra',
     }
 
-    await api.post('/api/blogs').send(newBlog).expect(400)
+    await api
+      .post('/api/blogs')
+      .set('Authorization', `bearer ${token}`)
+      .send(newBlog)
+      .expect(400)
   })
 })
 
 describe('deletion of a blog', () => {
-  test('succeeds with status code 204 if id is valid', async () => {
-    const blogsBeforeDelete = await testHelper.blogsInDB()
-    const { id, title } = blogsBeforeDelete[0]
+  let token, id, title
 
-    await api.delete(`/api/blogs/${id}`).expect(204)
+  beforeEach(async () => {
+    const newUser = { username: 'shahin', password: 'shahin' }
+    await api.post('/api/users').send(newUser)
+    const loginResponse = await api.post('/api/login').send(newUser)
+    token = loginResponse.body.token
+    const newBlog = {
+      title: 'javascript',
+      url: 'www.test.com',
+      author: 'shahin',
+      likes: 7,
+    }
+
+    const response = await api
+      .post('/api/blogs')
+      .set('Authorization', `bearer ${token}`)
+      .send(newBlog)
+
+    id = response.body.id
+    title = response.body.title
+    await testHelper.initialBlogs.push(response.body)
+
+  })
+
+  test('succeeds with status code 204 if id is valid', async () => {
+    await api
+      .delete(`/api/blogs/${id}`)
+      .set('Authorization', `bearer ${token}`)
+      .expect(204)
 
     const blogsAfterDelete = await testHelper.blogsInDB()
     expect(blogsAfterDelete.length).toBe(testHelper.initialBlogs.length - 1)
