@@ -10,11 +10,26 @@ const newBlog = ({
   url,
   setBlogs,
   blogs,
+  setNotification,
+  notification
 }) => {
   const handleFormSubmit = async (e) => {
     e.preventDefault()
-    const newBlog = await blogService.create({ title, author, url })
-    setBlogs(blogs.concat(newBlog))
+    try {
+      const newBlog = await blogService.create({ title, author, url })
+      setBlogs(blogs.concat(newBlog))
+      setNotification({
+        ...notification,
+        message: `a new blog ${title} by ${author} added`,
+        type: 'success',
+      })
+    } catch (error) {
+      setNotification({
+        ...notification,
+        message: `${error}`,
+        type: 'danger',
+      })
+    }
   }
 
   return (

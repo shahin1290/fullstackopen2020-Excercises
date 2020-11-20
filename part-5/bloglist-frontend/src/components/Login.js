@@ -2,14 +2,31 @@ import React from 'react'
 import loginService from '../services/login'
 import blogService from '../services/blogs'
 
-const Login = ({ setUsername, setPassword, username, password, setUser }) => {
+const Login = ({
+  setUsername,
+  setPassword,
+  username,
+  password,
+  setUser,
+  notification,
+  setNotification,
+}) => {
   const handleFormSubmit = async (e) => {
     e.preventDefault()
-    const user = await loginService.login({ username, password })
 
-    window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-    blogService.setToken(user.token)
-    setUser(user)
+    try {
+      const user = await loginService.login({ username, password })
+
+      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
+      blogService.setToken(user.token)
+      setUser(user)
+    } catch (error) {
+      setNotification({
+        ...notification,
+        message: 'wrong username or password',
+        type: 'danger',
+      })
+    }
   }
 
   return (
