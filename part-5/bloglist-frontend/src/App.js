@@ -11,9 +11,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [notification, setNotification] = useState({ message: null, type: '' })
 
   useEffect(() => {
@@ -34,9 +31,9 @@ const App = () => {
       <div>
         <h2>Log in to application</h2>
         <Notification
-        notification={notification}
-        setNotification={setNotification}
-      />
+          notification={notification}
+          setNotification={setNotification}
+        />
         <Login
           username={username}
           password={password}
@@ -60,14 +57,8 @@ const App = () => {
       <p>
         {user.name} logged in <Logout setUser={setUser} />
       </p>
-      
+
       <NewBlog
-        setTitle={setTitle}
-        setAuthor={setAuthor}
-        setUrl={setUrl}
-        title={title}
-        author={author}
-        url={url}
         blogs={blogs}
         setBlogs={setBlogs}
         notification={notification}

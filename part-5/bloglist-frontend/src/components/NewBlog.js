@@ -1,22 +1,14 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import blogService from '../services/blogs'
 import Togglable from './Togglable'
 
-const NewBlog = ({
-  setTitle,
-  setUrl,
-  setAuthor,
-  author,
-  title,
-  url,
-  setBlogs,
-  blogs,
-  setNotification,
-  notification,
-}) => {
+const NewBlog = ({ setBlogs, blogs, setNotification, notification }) => {
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
   const blogFormRef = useRef()
 
-  const handleFormSubmit = async (e) => {
+  const addBlog = async (e) => {
     e.preventDefault()
     try {
       const newBlog = await blogService.create({ title, author, url })
@@ -39,7 +31,7 @@ const NewBlog = ({
   return (
     <Togglable buttonLabel='new blog' ref={blogFormRef}>
       <h2>create new</h2>
-      <form onSubmit={handleFormSubmit}>
+      <form onSubmit={addBlog}>
         <div>
           title: <input onChange={({ target }) => setTitle(target.value)} />
         </div>
