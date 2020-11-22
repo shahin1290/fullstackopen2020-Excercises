@@ -60,7 +60,7 @@ const App = () => {
       <p>
         {user.name} logged in <Logout setUser={setUser} />
       </p>
-      <h2>create new</h2>
+      
       <NewBlog
         setTitle={setTitle}
         setAuthor={setAuthor}
