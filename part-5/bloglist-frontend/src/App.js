@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import Blog from './components/Blog'
+import Blogs from './components/Blogs'
 import blogService from './services/blogs'
 import Login from './components/Login'
 import Logout from './components/Logout'
@@ -64,16 +64,12 @@ const App = () => {
         notification={notification}
         setNotification={setNotification}
       />
-      {blogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          blogs={blogs}
-          setBlogs={setBlogs}
-          notification={notification}
-          setNotification={setNotification}
-        />
-      ))}
+      <Blogs
+        blogs={blogs}
+        setBlogs={setBlogs}
+        notification={notification}
+        setNotification={setNotification}
+      />
     </div>
   )
 }
