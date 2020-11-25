@@ -15,9 +15,11 @@ const Blog = ({ blog, user, addLike, removeBlog }) => {
 
   return (
     <div style={blogStyle}>
-      {blog.title} {blog.author}
-      <button onClick={toggleVisibility}>{visible ? 'hide' : 'show'}</button>
-      <div style={{ display: visible ? '' : 'none' }}>
+      <div className='default-render'>
+        {blog.title} {blog.author}
+      </div>
+      <button onClick={toggleVisibility}>{visible ? 'hide' : 'show'} </button>
+      <div style={{ display: visible ? '' : 'none' }} className='toggle-render'>
         <div>{blog.url}</div>
         <div>
           likes {blog.likes} <button onClick={addLike}>like</button>
