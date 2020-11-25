@@ -60,3 +60,15 @@ test('after clicking the button, other blog details are also displayed', () => {
   expect(urlElement).toBeVisible()
   expect(likesElement).toBeVisible()
 })
+
+test('clicking the like button twice calls event handler twice', () => {
+  const mockHandler = jest.fn()
+
+  const component = render(<Blog blog={blog} user={users[0]} addLike={mockHandler} />)
+
+  const button = component.getByText('like')
+  fireEvent.click(button)
+  fireEvent.click(button)
+
+  expect(mockHandler.mock.calls).toHaveLength(2)
+})
