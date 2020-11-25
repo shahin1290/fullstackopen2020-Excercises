@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from '@testing-library/react'
+import { render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import Blog from '../components/Blog'
 
@@ -35,4 +35,28 @@ test('only render blog title and author by default', async () => {
   expect(defaultRenderDiv).toHaveTextContent('Edsger W. Dijkstra')
 
   expect(toggleRenderDiv).toHaveStyle('display: none')
+
+  const element = component.getByText(
+    'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html'
+  )
+  expect(element).not.toBeVisible()
+})
+
+test('after clicking the button, other blog details are also displayed', () => {
+  const component = render(<Blog blog={blog} user={users[0]} />)
+  const button = component.getByText('show')
+
+  fireEvent.click(button)
+
+  const toggleRenderDiv = component.container.querySelector('.toggle-render')
+
+  expect(toggleRenderDiv).not.toHaveStyle('display: none')
+
+  const urlElement = component.getByText(
+    'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html'
+  )
+  const likesElement = component.getByText('likes 12')
+
+  expect(urlElement).toBeVisible()
+  expect(likesElement).toBeVisible()
 })
