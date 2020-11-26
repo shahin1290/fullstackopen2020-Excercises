@@ -100,7 +100,7 @@ const App = () => {
         setBlogs(blogs.filter((blog) => blog.id !== id))
         setNotification({
           ...notification,
-          message: `${title} has been removed successfully`,
+          message: 'the blog is removed successfully',
           type: 'success',
         })
       } catch (error) {
