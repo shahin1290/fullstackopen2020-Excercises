@@ -41,4 +41,22 @@ describe('Blog app', function () {
       cy.get('html').should('not.contain', 'Shahin Patowary logged in')
     })
   })
+
+  describe('When logged in', function () {
+    beforeEach(function () {
+      cy.login({ username: 'shahin', password: 'password' })
+    })
+
+    it.only('A blog can be created', function () {
+      cy.contains('new blog').click()
+      cy.get('#title').type('Canonical string reduction')
+      cy.get('#author').type('Edsger W. Dijkstra')
+      cy.get('#url').type(
+        'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html'
+      )
+      cy.get('#create-button').click()
+
+      cy.contains('Canonical string reduction')
+    })
+  })
 })
