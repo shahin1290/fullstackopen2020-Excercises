@@ -47,7 +47,7 @@ describe('Blog app', function () {
       cy.login({ username: 'shahin', password: 'password' })
     })
 
-    it.only('A blog can be created', function () {
+    it('A blog can be created', function () {
       cy.contains('new blog').click()
       cy.get('#title').type('Canonical string reduction')
       cy.get('#author').type('Edsger W. Dijkstra')
@@ -57,6 +57,24 @@ describe('Blog app', function () {
       cy.get('#create-button').click()
 
       cy.contains('Canonical string reduction')
+    })
+
+    describe('and a blog exists', function () {
+      beforeEach(function () {
+        cy.createBlog({
+          title: 'another blog on cypress',
+          author: 'kona',
+          blogUrl: 'http://www.test.com',
+        })
+      })
+
+      it.only('user can like the blog', function () {
+        cy.contains('another blog on cypress')
+        cy.contains('show').click()
+        cy.contains('like').click()
+
+        cy.contains('likes 1')
+      })
     })
   })
 })
