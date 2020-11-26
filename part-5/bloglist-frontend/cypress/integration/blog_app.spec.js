@@ -99,5 +99,34 @@ describe('Blog app', function () {
         cy.get('html').should('not.contain', 'remove')
       })
     })
+    describe('and some blogs exist', function () {
+      beforeEach(function () {
+        cy.createBlog({
+          title: 'first blog on cypress',
+          author: 'shahin',
+          blogUrl: 'http://www.test1.com',
+          likes: 7,
+        })
+        cy.createBlog({
+          title: 'second blog on cypress',
+          author: 'kona',
+          blogUrl: 'http://www.test2.com',
+        })
+        cy.createBlog({
+          title: 'third blog on cypress',
+          author: 'fairuz',
+          blogUrl: 'http://www.test3.com',
+          likes: 12,
+        })
+      })
+      it('blogs are ordered according to most likes being first', function () {
+        cy.get('.default-render').then(titles => {
+          cy.wrap(titles[0]).should('contain','third blog on cypress')
+          cy.wrap(titles[1]).should('contain','first blog on cypress')
+          cy.wrap(titles[2]).should('contain','second blog on cypress')
+        })
+
+      })
+    })
   })
 })
