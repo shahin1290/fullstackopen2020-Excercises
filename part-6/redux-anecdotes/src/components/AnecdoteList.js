@@ -44,4 +44,5 @@ const ConnectedAnecdoteList = connect(
   mapStateToProps,
   mapDispatchToProps
 )(AnecdoteList)
+
 export default ConnectedAnecdoteList
