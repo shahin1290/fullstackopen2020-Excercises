@@ -94,13 +94,19 @@ const CreateNew = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-     props.addNew({
-      content:content.value,
+    props.addNew({
+      content: content.value,
       author: author.value,
       info: info.value,
       votes: 0,
-    }) 
+    })
     history.push('/')
+  }
+
+  const resetInputFields = () => {
+    content.reset()
+    author.reset()
+    info.reset()
   }
 
   return (
@@ -119,7 +125,8 @@ const CreateNew = (props) => {
           url for more info
           <input name='info' {...info} />
         </div>
-        <button>create</button>
+        <button type='submit'>create</button>
+        <button type='reset' onClick={resetInputFields}>reset</button>
       </form>
     </div>
   )
