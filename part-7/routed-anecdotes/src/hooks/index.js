@@ -10,9 +10,7 @@ export const useField = (type) => {
   const reset = () => setValue('')
 
   return {
-    type,
-    value,
-    onChange,
-    reset,
+    formInput: { type, value, onChange },
+    resetInput: { reset },
   }
 }
