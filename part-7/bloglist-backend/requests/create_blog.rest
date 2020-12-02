@@ -1,0 +1,9 @@
+POST  http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJpZCI6IjVmYjYzMzJmMjg2NDEyNDQyOWU3MTJkNyIsImlhdCI6MTYwNTc4MjkyMn0.zjIJj9WV5mfvy080cNNuMk4xFp7ccOPh0lZsIP04p5c
+
+{
+  "title": "This is test blog",
+  "author": "test",
+  "url": "test@test.com"
+}
