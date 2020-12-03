@@ -9,10 +9,21 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import loginService from './services/login'
 import blogService from './services/blogs'
-import { initializeBlogs } from './reducers/blogReducer'
-import { createBlog } from './reducers/blogReducer'
+import {
+  createBlog,
+  initializeBlogs,
+  deleteBlog,
+  likeBlog,
+} from './reducers/blogReducer'
 
-const App = ({ blogs, initializeBlogs, createBlog, setNotification }) => {
+const App = ({
+  blogs,
+  initializeBlogs,
+  createBlog,
+  setNotification,
+  deleteBlog,
+  likeBlog,
+}) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -25,7 +36,6 @@ const App = ({ blogs, initializeBlogs, createBlog, setNotification }) => {
 
     fetchBlogs()
   }, [])
-
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -72,9 +82,7 @@ const App = ({ blogs, initializeBlogs, createBlog, setNotification }) => {
       const blogFound = blogs.find((n) => n.id === id)
       const changedBlog = { ...blogFound, likes: blog.likes + 1 }
 
-      const returnedBlog = await blogService.update(id, changedBlog)
-
-      blogs.map((blog) => (blog.id !== id ? blog : returnedBlog))
+      await likeBlog(id, changedBlog)
     } catch (error) {
       setNotification(`${title} was already removed from server`, 'danger', 5)
     }
@@ -85,8 +93,7 @@ const App = ({ blogs, initializeBlogs, createBlog, setNotification }) => {
 
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
       try {
-        await blogService.destroy(id)
-        blogs.filter((blog) => blog.id !== id)
+        deleteBlog(id)
         setNotification('the blog is removed successfully', 'success', 3)
       } catch (error) {
         setNotification(`${title} was already removed from server`, 'danger', 5)
@@ -144,13 +151,16 @@ const App = ({ blogs, initializeBlogs, createBlog, setNotification }) => {
 }
 
 const mapStateToProps = ({ blogs }) => ({
-  blogs,createBlog
+  blogs,
+  createBlog,
 })
 
 const mapDispatchToProps = {
   setNotification,
   initializeBlogs,
   createBlog,
+  deleteBlog,
+  likeBlog,
 }
 
 const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App)
