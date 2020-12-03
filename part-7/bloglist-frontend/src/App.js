@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import Blog from './components/Blog'
-import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
 import Logout from './components/Logout'
 import BlogForm from './components/BlogForm'
@@ -9,23 +8,24 @@ import { setNotification } from './reducers/notificationReducer'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import loginService from './services/login'
+import blogService from './services/blogs'
+import { initializeBlogs } from './reducers/blogReducer'
+import { createBlog } from './reducers/blogReducer'
 
-const App = ({ setNotification }) => {
-  const [blogs, setBlogs] = useState([])
+const App = ({ blogs, initializeBlogs, createBlog, setNotification }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const blogFormRef = useRef()
 
   useEffect(() => {
-    const fetchData = async () => {
-      const blogs = await blogService.getAll()
-      const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
-      setBlogs(sortedBlogs)
+    async function fetchBlogs() {
+      initializeBlogs()
     }
 
-    fetchData()
+    fetchBlogs()
   }, [])
+
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -54,14 +54,15 @@ const App = ({ setNotification }) => {
 
   const addBlog = async (newObject) => {
     try {
-      const newBlog = await blogService.create(newObject)
-      setBlogs(blogs.concat(newBlog))
+      createBlog(newObject)
       blogFormRef.current.toggleVisibility()
       setNotification(
-        `a new blog ${newObject.title} by ${newObject.author} added`, 'success', 5
+        `a new blog ${newObject.title} by ${newObject.author} added`,
+        'success',
+        5
       )
     } catch (error) {
-      setNotification(`${error}` , 'danger', 5)
+      setNotification(`${error}`, 'danger', 5)
     }
   }
 
@@ -72,7 +73,8 @@ const App = ({ setNotification }) => {
       const changedBlog = { ...blogFound, likes: blog.likes + 1 }
 
       const returnedBlog = await blogService.update(id, changedBlog)
-      setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)))
+
+      blogs.map((blog) => (blog.id !== id ? blog : returnedBlog))
     } catch (error) {
       setNotification(`${title} was already removed from server`, 'danger', 5)
     }
@@ -84,7 +86,7 @@ const App = ({ setNotification }) => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
       try {
         await blogService.destroy(id)
-        setBlogs(blogs.filter((blog) => blog.id !== id))
+        blogs.filter((blog) => blog.id !== id)
         setNotification('the blog is removed successfully', 'success', 3)
       } catch (error) {
         setNotification(`${title} was already removed from server`, 'danger', 5)
@@ -104,12 +106,13 @@ const App = ({ setNotification }) => {
 
   const blogForm = () => (
     <Togglable buttonLabel='new blog' ref={blogFormRef}>
-      <BlogForm createBlog={addBlog} />
+      <BlogForm addBlog={addBlog} />
     </Togglable>
   )
 
-  const showBlogs = () =>
-    blogs.map((blog) => (
+  const showBlogs = () => {
+    const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
+    return sortedBlogs.map((blog) => (
       <Blog
         key={blog.id}
         blog={blog}
@@ -118,7 +121,7 @@ const App = ({ setNotification }) => {
         removeBlog={removeBlog}
       />
     ))
-
+  }
   return (
     <div>
       <h1>blogs</h1>
@@ -140,12 +143,14 @@ const App = ({ setNotification }) => {
   )
 }
 
-const mapStateToProps = (state) => ({
-  notification: state.notification,
+const mapStateToProps = ({ blogs }) => ({
+  blogs,createBlog
 })
 
 const mapDispatchToProps = {
   setNotification,
+  initializeBlogs,
+  createBlog,
 }
 
 const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App)
