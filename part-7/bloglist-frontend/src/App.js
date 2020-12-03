@@ -1,19 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { connect } from 'react-redux'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
 import Logout from './components/Logout'
 import BlogForm from './components/BlogForm'
+import { setNotification } from './reducers/notificationReducer'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import loginService from './services/login'
 
-const App = () => {
+const App = ({ setNotification }) => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [notification, setNotification] = useState({ message: null, type: '' })
   const blogFormRef = useRef()
 
   useEffect(() => {
@@ -47,11 +48,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (error) {
-      setNotification({
-        ...notification,
-        message: 'wrong username or password',
-        type: 'danger',
-      })
+      setNotification('wrong username or password', 'danger', 3)
     }
   }
 
@@ -60,17 +57,11 @@ const App = () => {
       const newBlog = await blogService.create(newObject)
       setBlogs(blogs.concat(newBlog))
       blogFormRef.current.toggleVisibility()
-      setNotification({
-        ...notification,
-        message: `a new blog ${newObject.title} by ${newObject.author} added`,
-        type: 'success',
-      })
+      setNotification(
+        `a new blog ${newObject.title} by ${newObject.author} added`, 'success', 5
+      )
     } catch (error) {
-      setNotification({
-        ...notification,
-        message: `${error}`,
-        type: 'danger',
-      })
+      setNotification(`${error}` , 'danger', 5)
     }
   }
 
@@ -83,11 +74,7 @@ const App = () => {
       const returnedBlog = await blogService.update(id, changedBlog)
       setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)))
     } catch (error) {
-      setNotification({
-        ...notification,
-        message: `${title} was already removed from server`,
-        type: 'danger',
-      })
+      setNotification(`${title} was already removed from server`, 'danger', 5)
     }
   }
 
@@ -98,17 +85,9 @@ const App = () => {
       try {
         await blogService.destroy(id)
         setBlogs(blogs.filter((blog) => blog.id !== id))
-        setNotification({
-          ...notification,
-          message: 'the blog is removed successfully',
-          type: 'success',
-        })
+        setNotification('the blog is removed successfully', 'success', 3)
       } catch (error) {
-        setNotification({
-          ...notification,
-          message: `${title} was already removed from server`,
-          type: 'danger',
-        })
+        setNotification(`${title} was already removed from server`, 'danger', 5)
       }
     }
   }
@@ -143,10 +122,7 @@ const App = () => {
   return (
     <div>
       <h1>blogs</h1>
-      <Notification
-        notification={notification}
-        setNotification={setNotification}
-      />
+      <Notification />
 
       {!user ? (
         loginForm()
@@ -164,4 +140,14 @@ const App = () => {
   )
 }
 
-export default App
+const mapStateToProps = (state) => ({
+  notification: state.notification,
+})
+
+const mapDispatchToProps = {
+  setNotification,
+}
+
+const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App)
+
+export default ConnectedApp
