@@ -6,6 +6,7 @@ import BlogForm from './components/BlogForm'
 import { setNotification } from './reducers/notificationReducer'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import Users from './components/Users'
 import {
   createBlog,
   initializeBlogs,
@@ -14,6 +15,7 @@ import {
 } from './reducers/blogReducer'
 
 import { getCurrentUser, setCurrentUser, logout } from './reducers/loginReducer'
+import { getUsers } from './reducers/userReducer'
 
 const App = ({
   blogs,
@@ -25,7 +27,9 @@ const App = ({
   loginUser,
   getCurrentUser,
   setCurrentUser,
-  logout
+  logout,
+  getUsers,
+  users,
 }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -35,10 +39,13 @@ const App = ({
     async function fetchBlogs() {
       await initializeBlogs()
       await getCurrentUser()
+      await getUsers()
     }
 
     fetchBlogs()
   }, [])
+
+  console.log(users)
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -118,6 +125,8 @@ const App = ({
       />
     ))
   }
+  const showUsers = () => <Users />
+  
   return (
     <div>
       <h1>blogs</h1>
@@ -130,8 +139,9 @@ const App = ({
           <p>
             {loginUser.name} logged in <button onClick={logout}>logout</button>
           </p>
+          <h1>Users</h1>
+          {showUsers()}
           {blogForm()}
-
           {showBlogs()}
         </div>
       )}
@@ -139,10 +149,11 @@ const App = ({
   )
 }
 
-const mapStateToProps = ({ blogs, loginUser }) => ({
+const mapStateToProps = ({ blogs, loginUser, users }) => ({
   blogs,
   createBlog,
   loginUser,
+  users,
 })
 
 const mapDispatchToProps = {
@@ -153,7 +164,8 @@ const mapDispatchToProps = {
   likeBlog,
   getCurrentUser,
   setCurrentUser,
-  logout
+  logout,
+  getUsers,
 }
 
 const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App)
