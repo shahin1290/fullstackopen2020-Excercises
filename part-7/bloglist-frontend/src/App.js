@@ -2,19 +2,18 @@ import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
-import Logout from './components/Logout'
 import BlogForm from './components/BlogForm'
 import { setNotification } from './reducers/notificationReducer'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
-import loginService from './services/login'
-import blogService from './services/blogs'
 import {
   createBlog,
   initializeBlogs,
   deleteBlog,
   likeBlog,
 } from './reducers/blogReducer'
+
+import { getCurrentUser, setCurrentUser, logout } from './reducers/loginReducer'
 
 const App = ({
   blogs,
@@ -23,38 +22,29 @@ const App = ({
   setNotification,
   deleteBlog,
   likeBlog,
+  loginUser,
+  getCurrentUser,
+  setCurrentUser,
+  logout
 }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
   const blogFormRef = useRef()
 
   useEffect(() => {
     async function fetchBlogs() {
-      initializeBlogs()
+      await initializeBlogs()
+      await getCurrentUser()
     }
 
     fetchBlogs()
-  }, [])
-
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
-    }
   }, [])
 
   const handleLogin = async (e) => {
     e.preventDefault()
 
     try {
-      const user = await loginService.login({ username, password })
-
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
+      await setCurrentUser(username, password)
       setUsername('')
       setPassword('')
     } catch (error) {
@@ -81,7 +71,6 @@ const App = ({
     try {
       const blogFound = blogs.find((n) => n.id === id)
       const changedBlog = { ...blogFound, likes: blog.likes + 1 }
-
       await likeBlog(id, changedBlog)
     } catch (error) {
       setNotification(`${title} was already removed from server`, 'danger', 5)
@@ -124,7 +113,7 @@ const App = ({
         key={blog.id}
         blog={blog}
         addLike={() => addLike(blog)}
-        user={user}
+        user={loginUser}
         removeBlog={removeBlog}
       />
     ))
@@ -134,12 +123,12 @@ const App = ({
       <h1>blogs</h1>
       <Notification />
 
-      {!user ? (
+      {!loginUser ? (
         loginForm()
       ) : (
         <div>
           <p>
-            {user.name} logged in <Logout setUser={setUser} />
+            {loginUser.name} logged in <button onClick={logout}>logout</button>
           </p>
           {blogForm()}
 
@@ -150,9 +139,10 @@ const App = ({
   )
 }
 
-const mapStateToProps = ({ blogs }) => ({
+const mapStateToProps = ({ blogs, loginUser }) => ({
   blogs,
   createBlog,
+  loginUser,
 })
 
 const mapDispatchToProps = {
@@ -161,6 +151,9 @@ const mapDispatchToProps = {
   createBlog,
   deleteBlog,
   likeBlog,
+  getCurrentUser,
+  setCurrentUser,
+  logout
 }
 
 const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App)

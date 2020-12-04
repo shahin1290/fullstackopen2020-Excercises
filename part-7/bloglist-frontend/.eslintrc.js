@@ -15,7 +15,7 @@ module.exports = {
   },
   plugins: ['react', 'jest', 'cypress'],
   rules: {
-    indent: ['warn', 2],
+    indent: ['warn', 2, { SwitchCase: 1 }],
     'linebreak-style': ['warn', 'unix'],
     quotes: ['warn', 'single'],
     semi: ['warn', 'never'],
