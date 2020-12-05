@@ -13,7 +13,11 @@ const blogReducer = (state = [], action) => {
     }
 
     case 'LIKE_BLOG': {
-      return state.map((blog) => (blog.id !== action.data.id ? blog : action.data))
+      const blogToUpdate = state.find((blog) => blog.id === action.data.id)
+      blogToUpdate.likes++
+      return state.map((blog) =>
+        blog.id === action.data.id ? blogToUpdate : blog
+      )
     }
 
     default:
@@ -42,9 +46,9 @@ export const deleteBlog = (id) => {
   }
 }
 
-export const likeBlog = (id, blogToUpdate) => {
+export const likeBlog = (blogToUpdate) => {
   return async (dispatch) => {
-    const returnedBlog = await blogService.update(id, blogToUpdate)
+    const returnedBlog = await blogService.update(blogToUpdate)
     dispatch({ type: 'LIKE_BLOG', data: returnedBlog })
   }
 }

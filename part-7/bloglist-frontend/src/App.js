@@ -1,12 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import Blog from './components/Blog'
+import { Route, useRouteMatch } from 'react-router-dom'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import { setNotification } from './reducers/notificationReducer'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import Users from './components/Users'
+import User from './components/User'
+import Blogs from './components/Blogs'
+import Blog from './components/Blog'
+
 import {
   createBlog,
   initializeBlogs,
@@ -18,12 +22,9 @@ import { getCurrentUser, setCurrentUser, logout } from './reducers/loginReducer'
 import { getUsers } from './reducers/userReducer'
 
 const App = ({
-  blogs,
   initializeBlogs,
   createBlog,
   setNotification,
-  deleteBlog,
-  likeBlog,
   loginUser,
   getCurrentUser,
   setCurrentUser,
@@ -36,16 +37,10 @@ const App = ({
   const blogFormRef = useRef()
 
   useEffect(() => {
-    async function fetchBlogs() {
-      await initializeBlogs()
-      await getCurrentUser()
-      await getUsers()
-    }
-
-    fetchBlogs()
+    initializeBlogs()
+    getUsers()
+    getCurrentUser()
   }, [])
-
-  console.log(users)
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -73,30 +68,6 @@ const App = ({
     }
   }
 
-  const addLike = async (blog) => {
-    const { id, title } = blog
-    try {
-      const blogFound = blogs.find((n) => n.id === id)
-      const changedBlog = { ...blogFound, likes: blog.likes + 1 }
-      await likeBlog(id, changedBlog)
-    } catch (error) {
-      setNotification(`${title} was already removed from server`, 'danger', 5)
-    }
-  }
-
-  const removeBlog = async (blog) => {
-    const { id, title } = blog
-
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-      try {
-        deleteBlog(id)
-        setNotification('the blog is removed successfully', 'success', 3)
-      } catch (error) {
-        setNotification(`${title} was already removed from server`, 'danger', 5)
-      }
-    }
-  }
-
   const loginForm = () => (
     <LoginForm
       username={username}
@@ -113,20 +84,11 @@ const App = ({
     </Togglable>
   )
 
-  const showBlogs = () => {
-    const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
-    return sortedBlogs.map((blog) => (
-      <Blog
-        key={blog.id}
-        blog={blog}
-        addLike={() => addLike(blog)}
-        user={loginUser}
-        removeBlog={removeBlog}
-      />
-    ))
-  }
-  const showUsers = () => <Users />
-  
+  const userMatch = useRouteMatch('/users/:id')
+  const user = userMatch
+    ? users.find((user) => user.id === userMatch.params.id)
+    : null
+
   return (
     <div>
       <h1>blogs</h1>
@@ -140,9 +102,15 @@ const App = ({
             {loginUser.name} logged in <button onClick={logout}>logout</button>
           </p>
           <h1>Users</h1>
-          {showUsers()}
+          <Users />
+          <Route exact path='/users/:id'>
+            <User user={user} />
+          </Route>
           {blogForm()}
-          {showBlogs()}
+          <Blogs />
+          <Route exact path='/blogs/:id'>
+            <Blog />
+          </Route>
         </div>
       )}
     </div>
