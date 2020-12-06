@@ -57,7 +57,7 @@ const Blog = ({ setNotification, likeBlog, deleteBlog, blogs, loginUser }) => {
   )
 }
 
-const mapStateToProps = ({ blogs, loginUser, users }) => ({
+const mapStateToProps = ({ blogs, loginUser }) => ({
   blogs,
   loginUser,
 })
