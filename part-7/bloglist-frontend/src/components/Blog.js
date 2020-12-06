@@ -4,6 +4,14 @@ import { deleteBlog, likeBlog } from '../reducers/blogReducer'
 import { getCurrentUser } from '../reducers/loginReducer'
 import { setNotification } from '../reducers/notificationReducer'
 import { useRouteMatch } from 'react-router-dom'
+import {
+  Card,
+  CardContent,
+  CardActions,
+  Typography,
+  Button,
+  Link,
+} from '@material-ui/core'
 
 const Blog = ({ setNotification, likeBlog, deleteBlog, blogs, loginUser }) => {
   const blogMatch = useRouteMatch('/blogs/:id')
@@ -40,20 +48,31 @@ const Blog = ({ setNotification, likeBlog, deleteBlog, blogs, loginUser }) => {
   }
 
   return (
-    <div>
-      <h2>{blog.title}</h2>
-      <div>{blog.url}</div>
-      <div>
-        likes {blog.likes} <button onClick={addLike}>like</button>
-      </div>
-      <div>added by {blog.user.name}</div>
-      <div>
-        {' '}
+    <Card variant='outlined'>
+      <CardContent>
+        <Typography variant='h5' component='h2'>
+          {blog.title}
+        </Typography>
+        <Typography variant='body2' component='p'>
+          <Link>{blog.url}</Link>
+        </Typography>
+
+        <Typography variant='body2' component='p'>
+          likes {blog.likes}{' '}
+          <Button size='small' variant='outlined' onClick={addLike}>
+            like
+          </Button>
+        </Typography>
+      </CardContent>
+      <Typography color='textSecondary'>added by {blog.user.name}</Typography>
+      <CardActions>
         {loginUser && loginUser.username === blog.user.username && (
-          <button onClick={() => removeBlog(blog)}>remove</button>
+          <Button size='small' onClick={() => removeBlog(blog)}>
+            remove
+          </Button>
         )}
-      </div>
-    </div>
+      </CardActions>
+    </Card>
   )
 }
 
