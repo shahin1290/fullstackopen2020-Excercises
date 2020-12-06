@@ -10,15 +10,11 @@ import Users from './components/Users'
 import User from './components/User'
 import Blogs from './components/Blogs'
 import Blog from './components/Blog'
+import Menu from './components/Menu'
 
-import {
-  createBlog,
-  initializeBlogs,
-  deleteBlog,
-  likeBlog,
-} from './reducers/blogReducer'
+import { createBlog, initializeBlogs } from './reducers/blogReducer'
 
-import { getCurrentUser, setCurrentUser, logout } from './reducers/loginReducer'
+import { getCurrentUser, setCurrentUser } from './reducers/loginReducer'
 import { getUsers } from './reducers/userReducer'
 
 const App = ({
@@ -28,7 +24,6 @@ const App = ({
   loginUser,
   getCurrentUser,
   setCurrentUser,
-  logout,
   getUsers,
   users,
 }) => {
@@ -79,7 +74,7 @@ const App = ({
   )
 
   const blogForm = () => (
-    <Togglable buttonLabel='new blog' ref={blogFormRef}>
+    <Togglable buttonLabel='create new' ref={blogFormRef}>
       <BlogForm addBlog={addBlog} />
     </Togglable>
   )
@@ -91,23 +86,24 @@ const App = ({
 
   return (
     <div>
-      <h1>blogs</h1>
       <Notification />
 
       {!loginUser ? (
         loginForm()
       ) : (
         <div>
-          <p>
-            {loginUser.name} logged in <button onClick={logout}>logout</button>
-          </p>
-          <h1>Users</h1>
-          <Users />
+          <Menu />
+          <h2>blog app</h2>
+          <Route exact path='/'>
+            {blogForm()}
+            <Blogs />
+          </Route>
+          <Route exact path='/users'>
+            <Users />
+          </Route>
           <Route exact path='/users/:id'>
             <User user={user} />
           </Route>
-          {blogForm()}
-          <Blogs />
           <Route exact path='/blogs/:id'>
             <Blog />
           </Route>
@@ -128,11 +124,8 @@ const mapDispatchToProps = {
   setNotification,
   initializeBlogs,
   createBlog,
-  deleteBlog,
-  likeBlog,
   getCurrentUser,
   setCurrentUser,
-  logout,
   getUsers,
 }
 

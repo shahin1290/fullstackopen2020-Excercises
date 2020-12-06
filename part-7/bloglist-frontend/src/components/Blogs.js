@@ -11,9 +11,6 @@ const Blogs = ({ blogs }) => {
     borderWidth: 1,
     marginBottom: 5,
   }
-  const toggleVisibility = () => {
-    setVisible(!visible)
-  }
 
   const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
 
