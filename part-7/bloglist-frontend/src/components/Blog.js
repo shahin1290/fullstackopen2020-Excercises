@@ -5,14 +5,7 @@ import { getCurrentUser } from '../reducers/loginReducer'
 import { setNotification } from '../reducers/notificationReducer'
 import { useRouteMatch } from 'react-router-dom'
 
-const Blog = ({
-  setNotification,
-  likeBlog,
-  deleteBlog,
-  blogs,
-  loginUser,
-  users,
-}) => {
+const Blog = ({ setNotification, likeBlog, deleteBlog, blogs, loginUser }) => {
   const blogMatch = useRouteMatch('/blogs/:id')
   const blog = blogMatch
     ? blogs.find((blog) => blog.id === blogMatch.params.id)
@@ -67,7 +60,6 @@ const Blog = ({
 const mapStateToProps = ({ blogs, loginUser, users }) => ({
   blogs,
   loginUser,
-  users,
 })
 
 const mapDispatchToProps = {

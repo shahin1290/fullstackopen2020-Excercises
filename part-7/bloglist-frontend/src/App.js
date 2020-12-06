@@ -11,6 +11,7 @@ import User from './components/User'
 import Blogs from './components/Blogs'
 import Blog from './components/Blog'
 import Menu from './components/Menu'
+import Comments from './components/Comments'
 
 import { createBlog, initializeBlogs } from './reducers/blogReducer'
 
@@ -106,6 +107,7 @@ const App = ({
           </Route>
           <Route exact path='/blogs/:id'>
             <Blog />
+            <Comments />
           </Route>
         </div>
       )}

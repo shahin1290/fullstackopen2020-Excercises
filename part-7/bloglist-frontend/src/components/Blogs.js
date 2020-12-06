@@ -1,9 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 
 const Blogs = ({ blogs }) => {
-  const [visible, setVisible] = useState(false)
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
