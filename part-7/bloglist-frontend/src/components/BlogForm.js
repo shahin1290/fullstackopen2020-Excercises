@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-
+import { TextField, Button } from '@material-ui/core'
 
 const BlogForm = ({ addBlog }) => {
   const [title, setTitle] = useState('')
@@ -16,20 +16,44 @@ const BlogForm = ({ addBlog }) => {
   }
 
   return (
-    <div >
+    <div>
       <h2>create new</h2>
       <form onSubmit={handleAddBlog} className='formDiv'>
-        <div >
-          title: <input id='title' value={title} onChange={({ target }) => setTitle(target.value)} />
-        </div>
-        <div >
-          author: <input id='author'value={author} onChange={({ target }) => setAuthor(target.value)} />
-        </div>
-        <div >
-          url: <input id='url' value={url} onChange={({ target }) => setUrl(target.value)} />
-        </div>
         <div>
-          <button id="create-button" type='submit'>create</button>
+          <div>
+            <TextField
+              label='title'
+              id='title'
+              value={title}
+              onChange={({ target }) => setTitle(target.value)}
+            />
+          </div>
+          <div>
+            <TextField
+              label='author'
+              id='author'
+              value={author}
+              onChange={({ target }) => setAuthor(target.value)}
+            />
+          </div>
+          <div>
+            <TextField
+              label='url'
+              id='url'
+              value={url}
+              onChange={({ target }) => setUrl(target.value)}
+            />
+          </div>
+          <div>
+            <Button
+              variant='contained'
+              color='primary'
+              type='submit'
+              id='create-button'
+            >
+              create
+            </Button>
+          </div>
         </div>
       </form>
     </div>

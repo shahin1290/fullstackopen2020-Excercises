@@ -12,6 +12,8 @@ import Blogs from './components/Blogs'
 import Blog from './components/Blog'
 import Menu from './components/Menu'
 import Comments from './components/Comments'
+import Container from '@material-ui/core/Container'
+
 
 import { createBlog, initializeBlogs } from './reducers/blogReducer'
 
@@ -86,7 +88,7 @@ const App = ({
     : null
 
   return (
-    <div>
+    <Container>
       <Notification />
 
       {!loginUser ? (
@@ -111,7 +113,7 @@ const App = ({
           </Route>
         </div>
       )}
-    </div>
+    </Container>
   )
 }
 
