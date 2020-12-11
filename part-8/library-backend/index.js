@@ -1,4 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server')
+const { v4: uuidv4 } = require('uuid')
 
 let authors = [
   {
@@ -91,7 +92,7 @@ const typeDefs = gql`
     published: Int!
     author: String!
     id: ID!
-    genres: [String]!
+    genres: [String!]!
   }
 
   type Query {
@@ -99,6 +100,15 @@ const typeDefs = gql`
     bookCount: Int!
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
+  }
+
+  type Mutation {
+    addBook(
+      title: String!
+      published: Int!
+      author: String!
+      genres: [String!]!
+    ): Book
   }
 `
 
@@ -111,19 +121,20 @@ const resolvers = {
         return books
       }
 
-      if(!args.author && args.genre){
-        return books.filter(book => book.genres.includes(args.genre))
+      if (!args.author && args.genre) {
+        return books.filter((book) => book.genres.includes(args.genre))
       }
 
-      if(args.author && !args.genre){
+      if (args.author && !args.genre) {
         return books.filter((book) => book.author === args.author)
       }
 
-      if(args.author && args.genre){
-        const filterByGenre = books.filter(book => book.genres.includes(args.genre))
+      if (args.author && args.genre) {
+        const filterByGenre = books.filter((book) =>
+          book.genres.includes(args.genre)
+        )
         return filterByGenre.filter((book) => book.author === args.author)
       }
-
     },
     allAuthors: () => authors,
   },
@@ -131,7 +142,23 @@ const resolvers = {
     bookCount: (root) => {
       const booksByAuthor = books.filter((book) => book.author === root.name)
       return booksByAuthor.length
-    }
+    },
+  },
+  Mutation: {
+    addBook: (root, args) => {
+      const isAuthorFound = authors.find(
+        (author) => author.name === args.author
+      )
+
+      if (!isAuthorFound) {
+        const author = { name: args.author, id: uuidv4(), bookCount: 1 }
+        authors = authors.concat(author)
+      }
+
+      const book = { ...args, id: uuidv4() }
+      books = books.concat(book)
+      return book
+    },
   },
 }
 
