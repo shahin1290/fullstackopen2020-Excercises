@@ -1,4 +1,9 @@
-const { ApolloServer, gql } = require('apollo-server')
+const {
+  ApolloServer,
+  gql,
+  UserInputError,
+  AuthenticationError,
+} = require('apollo-server')
 const mongoose = require('mongoose')
 require('dotenv').config()
 const Book = require('./models/book')
@@ -64,13 +69,13 @@ const resolvers = {
   Query: {
     authorCount: () => Author.collection.countDocuments(),
     bookCount: () => Book.collection.countDocuments(),
-    allBooks: async(parent, args) => {
+    allBooks: async (parent, args) => {
       if (!args.author && !args.genre) {
         return Book.find({}).populate('author')
       }
     },
 
-      /* if (!args.author && args.genre) {
+    /* if (!args.author && args.genre) {
         return books.filter((book) => book.genres.includes(args.genre))
       }
 
@@ -84,11 +89,11 @@ const resolvers = {
         )
         return filterByGenre.filter((book) => book.author === args.author)
       } */
-    
+
     allAuthors: () => Author.find({}),
   },
   Author: {
-    bookCount: async(root) => {
+    bookCount: async (root) => {
       return await Book.collection.countDocuments({ author: root._id })
     },
   },
@@ -98,7 +103,13 @@ const resolvers = {
 
       if (!author) {
         const newAuthor = new Author({ name: args.author })
-        await newAuthor.save()
+        try {
+          await newAuthor.save()
+        } catch (error) {
+          throw new UserInputError(error.message, {
+            invalidArgs: args,
+          })
+        }
       }
 
       const newBook = new Book({
@@ -107,17 +118,30 @@ const resolvers = {
         published: args.published,
         genres: args.genres,
       })
-      await newBook.save()
-      return newBook
+
+      try {
+        await newBook.save()
+        return newBook
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
+      }
     },
-    editAuthor: async(root, args) => {
-      const updatedAuthor = await Author.findOneAndUpdate(
-        { name: args.name },
-        { $set: { born: args.setBornTo } },
-        { "new": true }
-      )
-      
-      return updatedAuthor
+    editAuthor: async (root, args) => {
+      try {
+        const updatedAuthor = await Author.findOneAndUpdate(
+          { name: args.name },
+          { $set: { born: args.setBornTo } },
+          { new: true }
+        )
+
+        return updatedAuthor
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
+      }
     },
   },
 }
