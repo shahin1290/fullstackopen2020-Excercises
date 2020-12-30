@@ -17,7 +17,9 @@ const Authors = ({ show }) => {
   if (result.loading) {
     return <div>loading...</div>
   }
+  
   const authors = result.data.allAuthors
+
   const options = authors.map((author) => ({
     value: author.name,
     label: author.name,
