@@ -108,12 +108,12 @@ const resolvers = {
         throw new AuthenticationError('not authenticated')
       }
 
-      const author = await Author.findOne({ name: args.author })
+      let author = await Author.findOne({ name: args.author })
 
       if (!author) {
         const newAuthor = new Author({ name: args.author })
         try {
-          await newAuthor.save()
+          author = await newAuthor.save()
         } catch (error) {
           throw new UserInputError(error.message, {
             invalidArgs: args,
@@ -123,7 +123,7 @@ const resolvers = {
 
       const newBook = new Book({
         title: args.title,
-        author: author,
+        author: author._id,
         published: args.published,
         genres: args.genres,
       })
