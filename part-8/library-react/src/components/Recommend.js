@@ -3,8 +3,12 @@ import { useQuery, useLazyQuery } from '@apollo/client'
 import { ME, ALL_BOOKS } from '../queries'
 
 const Recommend = ({ show }) => {
-  const result = useQuery(ME)
-  const [favoriteBooks, { loading, data }] = useLazyQuery(ALL_BOOKS)
+  const result = useQuery(ME, {
+    fetchPolicy: 'network-only',
+  })
+  const [favoriteBooks, { loading, data }] = useLazyQuery(ALL_BOOKS, {
+    fetchPolicy: 'network-only',
+  })
 
   useEffect(() => {
     if (result.data) {
