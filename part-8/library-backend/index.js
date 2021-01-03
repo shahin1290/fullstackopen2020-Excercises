@@ -83,7 +83,14 @@ const typeDefs = gql`
 
     login(username: String!, password: String!): Token
   }
+
+  type Subscription {
+    bookAdded: Book!
+  }
 `
+
+const { PubSub } = require('apollo-server')
+const pubsub = new PubSub()
 
 const resolvers = {
   Query: {
@@ -121,28 +128,22 @@ const resolvers = {
       let author = await Author.findOne({ name: args.author })
 
       if (!author) {
-        const newAuthor = new Author({ name: args.author })
-        try {
-          author = await newAuthor.save()
-        } catch (error) {
-          throw new UserInputError(error.message, {
-            invalidArgs: args,
-          })
-        }
+        author = new Author({ name: args.author })
+        author = await author.save()
       }
 
-      const newBook = new Book({
-        title: args.title,
-        author: author._id,
-        published: args.published,
-        genres: args.genres,
-      })
+     
 
       try {
-        await newBook.save()
-        return newBook
-      } catch (error) {
-        throw new UserInputError(error.message, {
+        const book = await new Book({ ...args, author: author._id })
+          .populate('author', { name: 1 })
+          .save()
+
+        pubsub.publish('BOOK_ADDED', { bookAdded: book })
+
+        return  book.execPopulate()
+      } catch (e) {
+        throw new UserInputError(e.message, {
           invalidArgs: args,
         })
       }
@@ -190,6 +191,12 @@ const resolvers = {
       return { value: jwt.sign(userForToken, JWT_SECRET) }
     },
   },
+
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(['BOOK_ADDED']),
+    },
+  },
 }
 
 const server = new ApolloServer({
@@ -205,6 +212,7 @@ const server = new ApolloServer({
   },
 })
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
   console.log(`Server ready at ${url}`)
+  console.log(`Subscriptions ready at ${subscriptionsUrl}`)
 })
