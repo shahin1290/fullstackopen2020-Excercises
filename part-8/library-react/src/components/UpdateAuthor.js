@@ -12,13 +12,6 @@ const UpdateAuthor = ({ show }) => {
     refetchQueries: [{ query: ALL_AUTHORS }],
   })
 
-  const authors = result.data.allAuthors
-
-  const options = authors.map((author) => ({
-    value: author.name,
-    label: author.name,
-  }))
-
   const submit = async (event) => {
     event.preventDefault()
 
@@ -40,6 +33,13 @@ const UpdateAuthor = ({ show }) => {
   if (result.loading) {
     return <div>loading...</div>
   }
+
+  const authors = result.data.allAuthors
+
+  const options = authors.map((author) => ({
+    value: author.name,
+    label: author.name,
+  }))
 
   return (
     <div>
