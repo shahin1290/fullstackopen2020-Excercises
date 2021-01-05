@@ -97,16 +97,12 @@ const resolvers = {
     authorCount: () => Author.collection.countDocuments(),
     bookCount: () => Book.collection.countDocuments(),
     allBooks: async (root, args) => {
-      let filters = {}
-
-      if (args.author) {
-        const author = await Author.findOne({ name: args.author })
-        filters.author = author._id
+      if (!args.author && !args.genre) {
+        return Book.find({}).populate('author')
       }
       if (args.genre) {
-        filters.genres = args.genre
+        return Book.find({ genres: { $in: [args.genre] } }).populate('author')
       }
-      return await Book.find(filters).populate('author', { name: 1 })
     },
 
     allAuthors: () => Author.find({}),
@@ -120,33 +116,39 @@ const resolvers = {
     },
   },
   Mutation: {
-    addBook: async (root, args, { currentUser }) => {
+    addBook: async (root, args, context) => {
+      const currentUser = context.currentUser
+
       if (!currentUser) {
         throw new AuthenticationError('not authenticated')
       }
 
       let author = await Author.findOne({ name: args.author })
-
       if (!author) {
         author = new Author({ name: args.author })
-        author = await author.save()
+
+        try {
+          await author.save()
+        } catch (error) {
+          throw new UserInputError(error.message, {
+            invalidArgs: args,
+          })
+        }
       }
 
-     
+      const book = new Book({ ...args, author: author })
 
       try {
-        const book = await new Book({ ...args, author: author._id })
-          .populate('author', { name: 1 })
-          .save()
-
-        pubsub.publish('BOOK_ADDED', { bookAdded: book })
-
-        return  book.execPopulate()
-      } catch (e) {
-        throw new UserInputError(e.message, {
+        await book.save()
+      } catch (error) {
+        throw new UserInputError(error.message, {
           invalidArgs: args,
         })
       }
+
+      pubsub.publish('BOOK_ADDED', { bookAdded: book })
+
+      return book
     },
     editAuthor: async (root, args, { currentUser }) => {
       if (!currentUser) {
