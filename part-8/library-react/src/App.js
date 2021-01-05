@@ -21,14 +21,24 @@ const App = () => {
   }, [])
 
   const updateCacheWith = (addedBook) => {
-    const includedIn = (set, object) =>
-      set.map(b => b.id).includes(object.id)
+    const includedIn = (set, object) => set.map((b) => b.id).includes(object.id)
 
-    const dataInStore = client.readQuery({ query: ALL_BOOKS })
-    if (!includedIn(dataInStore.allBooks, addedBook)) {
+    const bookDataInStore = client.readQuery({ query: ALL_BOOKS })
+    if (!includedIn(bookDataInStore.allBooks, addedBook)) {
       client.writeQuery({
         query: ALL_BOOKS,
-        data: { allBooks: dataInStore.allBooks.concat(addedBook) }
+        data: { allBooks: bookDataInStore.allBooks.concat(addedBook) },
+      })
+    }
+
+    const authorkDataInStore = client.readQuery({ query: ALL_AUTHORS })
+
+    if (!includedIn(authorkDataInStore.allAuthors, addedBook.author)) {
+      client.writeQuery({
+        query: ALL_AUTHORS,
+        data: {
+          allAuthors: [...authorkDataInStore.allAuthors, addedBook.author],
+        },
       })
     }
   }
@@ -79,7 +89,7 @@ const App = () => {
 
       <Books show={page === 'books'} />
 
-      <NewBook show={page === 'add'} />
+      <NewBook show={page === 'add'} updateCacheWith={updateCacheWith} />
 
       <Recommend show={page === 'recommend'} />
     </div>
