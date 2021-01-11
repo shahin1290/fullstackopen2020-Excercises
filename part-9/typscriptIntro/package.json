@@ -1,0 +1,13 @@
+{
+  "name": "bmi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "calculateBmi": "ts-node bmiCalculator.ts"
+
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
