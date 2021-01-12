@@ -28,7 +28,7 @@ interface ExcerciseStatistics {
   average: number;
 }
 
-const calculateExercises = (
+export const calculateExercises = (
   dailyExerciseHours: Array<number>,
   target: number
 ): ExcerciseStatistics => {
@@ -66,3 +66,4 @@ try {
 } catch ({ message }) {
   console.log('Error, something bad happened, message: ', message);
 }
+
