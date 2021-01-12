@@ -1,3 +1,23 @@
+interface parsedValues {
+  dailyExerciseHours: Array<number>
+  target: number
+}
+
+const parsedArguments = (args: Array<string>): parsedValues => {
+  if (args.length < 4) throw new Error('Not enough arguments')
+
+  const isNotNumber = args.slice(2).some((elem) => isNaN(Number(elem)))
+
+  if (isNotNumber) {
+    throw new Error('Arguments must be numbers')
+  }
+
+  return {
+    dailyExerciseHours: args.slice(3).map((e) => Number(e)),
+    target: Number(args[2]),
+  }
+}
+
 interface ExcerciseStatistics {
   periodLength: number
   trainingDays: number
@@ -20,7 +40,7 @@ const calculateExercises = (
   if (average >= target) {
     rating = 3
     ratingDescription = 'awesome. target fullfilled'
-  } else if (average - target < 0 &&  average - target > - .5) {
+  } else if (average - target < 0 && average - target > -0.5) {
     rating = 2
     ratingDescription = 'not too bad but could be better'
   } else {
@@ -39,4 +59,10 @@ const calculateExercises = (
   }
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1],2)) 
+try {
+  const { dailyExerciseHours, target } = parsedArguments(process.argv)
+  const result = calculateExercises(dailyExerciseHours, target)
+  console.log(result)
+} catch ( e ) {
+  console.log('Error, something bad happened, message: ', e.message)
+}
