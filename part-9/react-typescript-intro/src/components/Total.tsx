@@ -1,20 +1,12 @@
 import React from 'react';
+import { CoursePart } from '../types';
 
-export interface CoursePart {
-  name: string;
-  exerciseCount: number;
-}
-
-export interface TotalProps {
-  courseParts: Array<CoursePart>;
-}
-
-const Total: React.FC<TotalProps> = ({ courseParts }) => (
+const Total: React.FC<{ courseParts: CoursePart[] }> = ({ courseParts }) => (
   <div>
-    <p>
+    <h2>
       Number of exercises{' '}
       {courseParts.reduce((acc, curr) => acc + curr.exerciseCount, 0)}
-    </p>
+    </h2>
   </div>
 );
 

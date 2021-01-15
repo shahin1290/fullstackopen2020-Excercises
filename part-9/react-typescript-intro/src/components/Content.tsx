@@ -1,22 +1,46 @@
 import React from 'react';
 
-export interface CoursePart {
-  name: string;
-  exerciseCount: number;
-}
+import { CoursePart } from '../types';
+import Part from './Part';
 
-export interface ContentProps {
-  courseParts: Array<CoursePart>
-}
+const Content: React.FC<{ courseParts: CoursePart[] }> = ({ courseParts }) => {
+  const assertNever = (value: never): never => {
+    throw new Error(
+      `Unhandled discriminated union member: ${JSON.stringify(value)}`
+    );
+  };
 
-const Content: React.FC<ContentProps> = ({ courseParts }) => (
-  <div>
-    {courseParts.map(part => 
-      <p key={part.name}>
-        {part.name} {part.exerciseCount}
-      </p>
-    )}
-  </div>
-);
+  courseParts.forEach((part) => {
+    switch (part.name) {
+      case 'Fundamentals':
+        break;
+      case 'Using props to pass data':
+        break;
+      case 'Deeper type usage':
+        break;
+      case 'Exhaustive type checking':
+        break;
+      default:
+        return assertNever(part);
+    }
+  });
+
+  return (
+    <div>
+      {courseParts.map((part) => {
+        return (
+          <div key={part.name}>
+            <p>
+              <b>
+                {part.name} {part.exerciseCount}
+              </b>
+            </p>
+            <Part part={part} />
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 export default Content;
