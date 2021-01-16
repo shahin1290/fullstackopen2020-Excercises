@@ -1,13 +1,9 @@
 import patients from '../../data/patients.json';
 import { uuid } from 'uuidv4';
 
-import {
-  NonSensitivePatientEntry,
-  NewPatientEntry,
-  PatientEntry,
-} from '../types';
+import { PublicPatient, NewPatientEntry, Patient } from '../types';
 
-const getNonSensitivePatientEntries = (): NonSensitivePatientEntry[] =>
+const getNonSensitivePatientEntries = (): PublicPatient[] =>
   patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
     id,
     name,
@@ -16,14 +12,27 @@ const getNonSensitivePatientEntries = (): NonSensitivePatientEntry[] =>
     occupation,
   }));
 
-const addPatient = (entry: NewPatientEntry): PatientEntry => {
+const addPatient = (entry: NewPatientEntry): Patient => {
   const newPatientEntry = {
     id: uuid(),
     ...entry,
+    entries:[]
   };
 
   patients.push(newPatientEntry);
   return newPatientEntry;
 };
 
-export default { getNonSensitivePatientEntries, addPatient };
+const getPatient = (id: string): Patient => {
+  const [ patient ] = patients.filter(p =>
+    p.id === id
+  );
+
+  if (!patient) {
+    throw new Error('Invalid id');
+  }
+
+  return patient;
+};
+
+export default { getNonSensitivePatientEntries, addPatient, getPatient };
