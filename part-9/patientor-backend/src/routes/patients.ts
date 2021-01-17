@@ -25,15 +25,14 @@ router.post('/patients', (req, res) => {
     const addedEntry = patientService.addPatient(newPatientEntry);
 
     res.json(addedEntry);
-  } catch (e) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    res.status(400).send(e.message);
+  } catch ({message}) {
+    res.status(400).send(message);
   }
 });
 
 router.get('/patients/:id', (req, res) => {
   try {
-    const patient = patientService.getPatient(req.params.id);
+    const patient = patientService.findPatientById(req.params.id);
     res.json(patient);
   } catch ({ message }) {
     res.status(400).send(message);

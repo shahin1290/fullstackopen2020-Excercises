@@ -3,6 +3,10 @@ import { uuid } from 'uuidv4';
 
 import { PublicPatient, NewPatientEntry, Patient } from '../types';
 
+const getPatients = (): Array<Patient> => {
+  return patients;
+};
+
 const getNonSensitivePatientEntries = (): PublicPatient[] =>
   patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
     id,
@@ -16,23 +20,22 @@ const addPatient = (entry: NewPatientEntry): Patient => {
   const newPatientEntry = {
     id: uuid(),
     ...entry,
-    entries:[]
+    entries: [],
   };
 
   patients.push(newPatientEntry);
   return newPatientEntry;
 };
 
-const getPatient = (id: string): Patient => {
-  const [ patient ] = patients.filter(p =>
-    p.id === id
-  );
-
-  if (!patient) {
-    throw new Error('Invalid id');
-  }
+const findPatientById = (id: string): Patient | undefined => {
+  const patient = patients.find((p) => p.id === id);
 
   return patient;
 };
 
-export default { getNonSensitivePatientEntries, addPatient, getPatient };
+export default {
+  getPatients,
+  getNonSensitivePatientEntries,
+  addPatient,
+  findPatientById,
+};
