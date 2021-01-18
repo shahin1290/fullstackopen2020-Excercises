@@ -1,4 +1,4 @@
-import diagnoseData from '../../data/diagnose.json';
+import diagnoseData from '../../data/diagnose';
 import { Diagnosis } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

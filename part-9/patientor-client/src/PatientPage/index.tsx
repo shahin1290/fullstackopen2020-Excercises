@@ -4,10 +4,12 @@ import axios from 'axios';
 import { apiBaseUrl } from '../constants';
 import { Patient, Gender } from '../types';
 import { Icon, SemanticICONS } from 'semantic-ui-react';
+import { useStateValue } from '../state';
 
 const PatientPage: FC = () => {
   const { id } = useParams<{ id: string }>();
   const [patient, setPatient] = useState<Patient>();
+  const [{ diagnoses }] = useStateValue();
 
   useEffect(() => {
     const getPatient = async () => {
@@ -44,10 +46,10 @@ const PatientPage: FC = () => {
           <div key={entry.id}>
             {entry.date} {entry.description}{' '}
             <ul>
-            {entry.diagnosisCodes &&
+              {entry.diagnosisCodes &&
                 entry.diagnosisCodes.map((code, i) => (
                   <li key={i}>
-                    {code}
+                    {code} {diagnoses[code] && diagnoses[code].name}
                   </li>
                 ))}
             </ul>
