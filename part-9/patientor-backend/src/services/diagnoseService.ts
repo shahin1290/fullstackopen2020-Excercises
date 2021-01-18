@@ -1,10 +1,10 @@
 import diagnoseData from '../../data/diagnose.json';
-import { DiagnoseEntry } from '../types';
+import { Diagnosis } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const diagnoses: DiagnoseEntry[] = diagnoseData;
+const diagnoses: Diagnosis[] = diagnoseData;
 
-const getDiagnoses = (): DiagnoseEntry[] => {
+const getDiagnoses = (): Diagnosis[] => {
   return diagnoses;
 };
 
