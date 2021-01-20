@@ -2,7 +2,7 @@
 import express from 'express';
 import patientService from '../services/patientService';
 import diagnoseService from '../services/diagnoseService';
-import toNewPatientEntry from '../utils';
+import { toNewPatientEntry, toNewEntry } from '../utils';
 
 const router = express.Router();
 
@@ -25,7 +25,7 @@ router.post('/patients', (req, res) => {
     const addedEntry = patientService.addPatient(newPatientEntry);
 
     res.json(addedEntry);
-  } catch ({message}) {
+  } catch ({ message }) {
     res.status(400).send(message);
   }
 });
@@ -36,6 +36,18 @@ router.get('/patients/:id', (req, res) => {
     res.json(patient);
   } catch ({ message }) {
     res.status(400).send(message);
+  }
+});
+
+router.post('/patients/:id/entries', (req, res) => {
+  try {
+    const patient = patientService.findPatientById(req.params.id);
+    const entryNew = toNewEntry(req.body);
+    const newPatient = patientService.addNewEntry(patient, entryNew);
+    res.json(newPatient);
+  } catch ({ message }) {
+    res.status(400).json({ message });
+    return;
   }
 });
 
