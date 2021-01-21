@@ -42,9 +42,9 @@ router.get('/patients/:id', (req, res) => {
 router.post('/patients/:id/entries', (req, res) => {
   try {
     const patient = patientService.findPatientById(req.params.id);
-    const entryNew = toNewEntry(req.body);
-    const newPatient = patientService.addNewEntry(patient, entryNew);
-    res.json(newPatient);
+    const newEntry = toNewEntry(req.body);
+    const addedEntry = patientService.addNewEntry(patient, newEntry);
+    res.json(addedEntry);
   } catch ({ message }) {
     res.status(400).json({ message });
     return;

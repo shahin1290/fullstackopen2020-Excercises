@@ -33,17 +33,16 @@ const addPatient = (entry: NewPatientEntry): Patient => {
   return newPatientEntry;
 };
 
-const findPatientById = (id: string): Patient  => {
+const findPatientById = (id: string): Patient => {
   const patient = patients.find((p) => p.id === id);
-  if (!patient)
-  throw new Error("Patient not found");
+  if (!patient) throw new Error('Patient not found');
   return patient;
 };
 
-const addNewEntry = (patient: Patient , entry: NewEntry): Patient => {
-  const newEntry = { ...entry, id: uuid() } as Entry;
+const addNewEntry = (patient: Patient, entry: NewEntry): Entry => {
+  const newEntry = { ...entry, id: uuid() };
   patient.entries.push(newEntry);
-  return patient;
+  return newEntry;
 };
 
 export default {
