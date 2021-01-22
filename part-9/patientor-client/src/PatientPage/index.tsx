@@ -47,12 +47,14 @@ const PatientPage: FC = () => {
       try {
         const res = await axios.get<Patient>(`${apiBaseUrl}/patients/${id}`);
         setPatient(res.data);
+        console.log('state');
+        
       } catch ({ message }) {
         console.error(message);
       }
     };
     getPatient();
-  }, [id]);
+  }, [id, dispatch]);
 
   const mapToIconName = (gender: Gender): SemanticICONS => {
     enum GenderIconName {

@@ -29,13 +29,14 @@ export const AddPatientForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
         date: '',
         specialist: '',
         employerName: '',
-        sickLeave: undefined,
-        diagnosisCodes: undefined,
+        diagnosisCodes: [],
       }}
       onSubmit={onSubmit}
       validate={(values) => {
         const requiredError = 'Field is required';
-        const errors: { [field: string]: string } = {};
+        const errors: {
+          [field: string]: string | { [field: string]: string };
+        } = {};
         if (!values.type) {
           errors.type = requiredError;
         }
@@ -44,6 +45,9 @@ export const AddPatientForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
         }
         if (!values.date) {
           errors.date = requiredError;
+        }
+        if (!Date.parse(values.date)) {
+          errors.date = 'Incorrect format date';
         }
         if (!values.specialist) {
           errors.specialist = requiredError;
@@ -55,7 +59,7 @@ export const AddPatientForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
         return errors;
       }}
     >
-      {({ isValid, dirty, setFieldValue, setFieldTouched }) => {
+      {({ values, isValid, dirty, setFieldValue, setFieldTouched }) => {
         return (
           <Form className='form ui'>
             <Field
@@ -78,12 +82,16 @@ export const AddPatientForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
               component={TextField}
             />
 
-            <Field
-              label='EmployerName'
-              placeholder='Employer Name'
-              name='employerName'
-              component={TextField}
-            />
+            {values.type === 'OccupationalHealthcare' && (
+              <div>
+                <Field
+                  label='EmployerName'
+                  placeholder='Employer Name'
+                  name='employerName'
+                  component={TextField}
+                />
+              </div>
+            )}
 
             <Field
               label='Description'
