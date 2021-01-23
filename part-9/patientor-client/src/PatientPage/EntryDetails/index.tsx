@@ -13,8 +13,6 @@ import { Icon } from 'semantic-ui-react';
 const EntryDetails: React.FC<{ entry: Entry }> = ({ entry }) => {
   const [{ diagnoses }] = useStateValue();
 
-  
-
   const getDiagnosisCode = () =>
     entry.diagnosisCodes &&
     entry.diagnosisCodes.map((code, i) => (

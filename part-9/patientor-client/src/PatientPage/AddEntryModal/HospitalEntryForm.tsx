@@ -3,17 +3,17 @@ import { Grid, Button } from 'semantic-ui-react';
 import { Field, Formik, Form } from 'formik';
 import { useStateValue } from '../../state';
 
-import { TextField, NumberField, DiagnosisSelection } from './FormField';
-import { NewHealthCheckEntry } from '../../types';
+import { TextField, DiagnosisSelection } from './FormField';
+import { NewHospitalEntry } from '../../types';
 
-export type EntryFormValues = NewHealthCheckEntry;
+export type EntryFormValues = NewHospitalEntry;
 
 interface Props {
   onSubmit: (values: EntryFormValues) => void;
   onCancel: () => void;
 }
 
-const HealthCheckEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
+const HospitalForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
   const [{ diagnoses }] = useStateValue();
 
   return (
@@ -22,14 +22,19 @@ const HealthCheckEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
         description: '',
         specialist: '',
         date: '',
-        type: 'HealthCheck',
-        healthCheckRating: 0,
+        type: 'Hospital',
+        discharge: {
+          date: '',
+          criteria: '',
+        },
         diagnosisCodes: [],
       }}
       onSubmit={onSubmit}
       validate={(values) => {
         const requiredError = 'Field is required';
-        const errors: { [field: string]: string } = {};
+        const errors: {
+          [field: string]: string | { [field: string]: string };
+        } = {};
         if (!values.description) {
           errors.description = requiredError;
         }
@@ -42,12 +47,21 @@ const HealthCheckEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
         if (!values.specialist) {
           errors.specialist = requiredError;
         }
-        if (!values.healthCheckRating) {
-          errors.healthCheckRating = requiredError;
+
+        if (!values.discharge.criteria || !values.discharge.date) {
+          errors.discharge = {};
+          if (!values.discharge.criteria) {
+            errors.discharge.criteria = requiredError;
+          }
+          if (!values.discharge.date) {
+            errors.discharge.date = requiredError;
+          }
         }
-        if (values.healthCheckRating > 3 || values.healthCheckRating < 0) {
-          errors.healthCheckRating = 'Health Check Rating must be 0-3';
+        if (values.discharge.date && !Date.parse(values.discharge.date)) {
+          errors.discharge = {};
+          errors.discharge.date = 'Incorrect format date';
         }
+
         return errors;
       }}
     >
@@ -66,7 +80,6 @@ const HealthCheckEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
               name='specialist'
               component={TextField}
             />
-
             <Field
               label='Description'
               placeholder='description'
@@ -78,13 +91,18 @@ const HealthCheckEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
               setFieldTouched={setFieldTouched}
               diagnoses={Object.values(diagnoses)}
             />
+
             <Field
-              label='HealthCheckRating'
-              placeholder='0-3'
-              name='healthCheckRating'
-              component={NumberField}
-              min={0}
-              max={3}
+              label='Discharge date'
+              placeholder='YYYY-MM-DD'
+              name='discharge.date'
+              component={TextField}
+            />
+            <Field
+              label='Discharge criteria'
+              placeholder='discharge criteria'
+              name='discharge.criteria'
+              component={TextField}
             />
             <Grid>
               <Grid.Column floated='left' width={5}>
@@ -110,4 +128,4 @@ const HealthCheckEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
   );
 };
 
-export default HealthCheckEntryForm;
+export default HospitalForm;

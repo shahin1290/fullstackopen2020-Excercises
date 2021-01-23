@@ -3,6 +3,7 @@ import React from 'react';
 import { NewEntry } from '../../types';
 import HealthCheckForm from './HealthCheckEntryForm';
 import OccupationalHealthEntryForm from './OccupationalHealthEntryForm';
+import HospitalEntryForm from './HospitalEntryForm';
 import { EntryTypeOption } from './FormField';
 
 export type EntryFormValues = NewEntry;
@@ -21,13 +22,11 @@ interface Props {
 const entryTypeOptions: EntryTypeOption[] = [
   { value: EntryType.HealthCheck, label: 'HealthCheck' },
   { value: EntryType.Hospital, label: 'Hospital' },
-
   { value: EntryType.OccupationalHealthcare, label: 'OccupationalHealthcare' },
 ];
 
 export const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
-  const [entryType, setEntryType] = React.useState('OccupationalHealthcare' as EntryType);
-  console.log(entryType);
+  const [entryType, setEntryType] = React.useState('HealthCheck' as EntryType);
 
   return (
     <div>
@@ -43,6 +42,7 @@ export const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
           </option>
         ))}
       </select>
+
       {entryType === 'HealthCheck' && (
         <HealthCheckForm onSubmit={onSubmit} onCancel={onCancel} />
       )}
@@ -52,7 +52,7 @@ export const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
       )}
 
       {entryType === 'Hospital' && (
-        <OccupationalHealthEntryForm onSubmit={onSubmit} onCancel={onCancel} />
+        <HospitalEntryForm onSubmit={onSubmit} onCancel={onCancel} />
       )}
     </div>
   );

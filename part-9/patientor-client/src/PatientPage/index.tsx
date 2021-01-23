@@ -16,7 +16,7 @@ const PatientPage: FC = () => {
 
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string | undefined>();
-  const [, dispatch] = useStateValue();
+  const [patients, dispatch] = useStateValue();
 
   const openModal = (): void => setModalOpen(true);
 
@@ -24,6 +24,18 @@ const PatientPage: FC = () => {
     setModalOpen(false);
     setError(undefined);
   };
+
+  useEffect(() => {
+    const getPatient = async () => {
+      try {
+        const res = await axios.get<Patient>(`${apiBaseUrl}/patients/${id}`);
+        setPatient(res.data);
+      } catch ({ message }) {
+        console.error(message);
+      }
+    };
+    getPatient();
+  }, [id, dispatch, patients]);
 
   const submitNewEntry = async (values: EntryFormValues) => {
     try {
@@ -41,19 +53,6 @@ const PatientPage: FC = () => {
       setError(e.response.data.error);
     }
   };
-
-  useEffect(() => {
-    const getPatient = async () => {
-      try {
-        const res = await axios.get<Patient>(`${apiBaseUrl}/patients/${id}`);
-        setPatient(res.data);
-        
-      } catch ({ message }) {
-        console.error(message);
-      }
-    };
-    getPatient();
-  }, [id, dispatch]);
 
   const mapToIconName = (gender: Gender): SemanticICONS => {
     enum GenderIconName {
