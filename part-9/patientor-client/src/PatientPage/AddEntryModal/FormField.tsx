@@ -3,11 +3,39 @@ import { ErrorMessage, Field, FieldProps, FormikProps } from 'formik';
 import { Dropdown, DropdownProps, Form } from 'semantic-ui-react';
 import { Diagnosis } from '../../types';
 
-// props for select field component
+export enum EntryType {
+  HealthCheck = 'HealthCheck',
+  Hospital = 'Hospital',
+  OccupationalHealthcare = 'OccupationalHealthcare',
+}
+
+export type EntryTypeOption = {
+  value: EntryType;
+  label: string;
+};
+
 type SelectFieldProps = {
   name: string;
   label: string;
+  options: EntryTypeOption[];
 };
+
+export const SelectField: React.FC<SelectFieldProps> = ({
+  name,
+  label,
+  options,
+}: SelectFieldProps) => (
+  <Form.Field>
+    <label>{label}</label>
+    <Field as='select' name={name} className='ui dropdown'>
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label || option.value}
+        </option>
+      ))}
+    </Field>
+  </Form.Field>
+);
 
 interface TextProps extends FieldProps {
   label: string;
@@ -28,9 +56,6 @@ export const TextField: React.FC<TextProps> = ({
   </Form.Field>
 );
 
-/*
-  for exercises 9.24.-
-*/
 interface NumberProps extends FieldProps {
   label: string;
   errorMessage?: string;

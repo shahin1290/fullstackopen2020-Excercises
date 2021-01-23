@@ -1,133 +1,61 @@
 import React from 'react';
-import { Grid, Button } from 'semantic-ui-react';
-import { Field, Formik, Form } from 'formik';
-import { useStateValue } from '../../state';
 
-import { TextField } from './FormField';
-import { OccupationalHealthcareEntry } from '../../types';
-import { DiagnosisSelection } from './FormField';
+import { NewEntry } from '../../types';
+import HealthCheckForm from './HealthCheckEntryForm';
+import OccupationalHealthEntryForm from './OccupationalHealthEntryForm';
+import { EntryTypeOption } from './FormField';
 
-/*
- * use type Patient, but omit id and entries,
- * because those are irrelevant for new patient object.
- */
-export type EntryFormValues = Omit<OccupationalHealthcareEntry, 'id'>;
+export type EntryFormValues = NewEntry;
+
+export enum EntryType {
+  HealthCheck = 'HealthCheck',
+  Hospital = 'Hospital',
+  OccupationalHealthcare = 'OccupationalHealthcare',
+}
 
 interface Props {
   onSubmit: (values: EntryFormValues) => void;
   onCancel: () => void;
 }
 
-export const AddPatientForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
-  const [{ diagnoses }] = useStateValue();
+const entryTypeOptions: EntryTypeOption[] = [
+  { value: EntryType.HealthCheck, label: 'HealthCheck' },
+  { value: EntryType.Hospital, label: 'Hospital' },
+
+  { value: EntryType.OccupationalHealthcare, label: 'OccupationalHealthcare' },
+];
+
+export const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
+  const [entryType, setEntryType] = React.useState('OccupationalHealthcare' as EntryType);
+  console.log(entryType);
 
   return (
-    <Formik
-      initialValues={{
-        type: 'OccupationalHealthcare',
-        description: '',
-        date: '',
-        specialist: '',
-        employerName: '',
-        diagnosisCodes: [],
-      }}
-      onSubmit={onSubmit}
-      validate={(values) => {
-        const requiredError = 'Field is required';
-        const errors: {
-          [field: string]: string | { [field: string]: string };
-        } = {};
-        if (!values.type) {
-          errors.type = requiredError;
-        }
-        if (!values.description) {
-          errors.description = requiredError;
-        }
-        if (!values.date) {
-          errors.date = requiredError;
-        }
-        if (!Date.parse(values.date)) {
-          errors.date = 'Incorrect format date';
-        }
-        if (!values.specialist) {
-          errors.specialist = requiredError;
-        }
-        if (!values.employerName) {
-          errors.employerName = requiredError;
-        }
+    <div>
+      <h5>Entry Type</h5>
+      <select
+        value={entryType}
+        onChange={({ target }) => setEntryType(target.value as EntryType)}
+        className='ui dropdown'
+      >
+        {entryTypeOptions.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label || option.value}
+          </option>
+        ))}
+      </select>
+      {entryType === 'HealthCheck' && (
+        <HealthCheckForm onSubmit={onSubmit} onCancel={onCancel} />
+      )}
 
-        return errors;
-      }}
-    >
-      {({ values, isValid, dirty, setFieldValue, setFieldTouched }) => {
-        return (
-          <Form className='form ui'>
-            <Field
-              label='Type'
-              placeholder='Type'
-              name='type'
-              component={TextField}
-            />
-            <Field
-              label='Date'
-              placeholder='Date'
-              name='date'
-              component={TextField}
-            />
+      {entryType === 'OccupationalHealthcare' && (
+        <OccupationalHealthEntryForm onSubmit={onSubmit} onCancel={onCancel} />
+      )}
 
-            <Field
-              label='Specialist'
-              placeholder='Specialist'
-              name='specialist'
-              component={TextField}
-            />
-
-            {values.type === 'OccupationalHealthcare' && (
-              <div>
-                <Field
-                  label='EmployerName'
-                  placeholder='Employer Name'
-                  name='employerName'
-                  component={TextField}
-                />
-              </div>
-            )}
-
-            <Field
-              label='Description'
-              placeholder='Description'
-              name='description'
-              component={TextField}
-            />
-
-            <DiagnosisSelection
-              setFieldValue={setFieldValue}
-              setFieldTouched={setFieldTouched}
-              diagnoses={Object.values(diagnoses)}
-            />
-
-            <Grid>
-              <Grid.Column floated='left' width={5}>
-                <Button type='button' onClick={onCancel} color='red'>
-                  Cancel
-                </Button>
-              </Grid.Column>
-              <Grid.Column floated='right' width={5}>
-                <Button
-                  type='submit'
-                  floated='right'
-                  color='green'
-                  disabled={!dirty || !isValid}
-                >
-                  Add
-                </Button>
-              </Grid.Column>
-            </Grid>
-          </Form>
-        );
-      }}
-    </Formik>
+      {entryType === 'Hospital' && (
+        <OccupationalHealthEntryForm onSubmit={onSubmit} onCancel={onCancel} />
+      )}
+    </div>
   );
 };
 
-export default AddPatientForm;
+export default AddEntryForm;
